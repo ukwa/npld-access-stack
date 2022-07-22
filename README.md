@@ -1,6 +1,10 @@
 Reading Room Wayback Service Stack <!-- omit in toc -->
 ==================================
 
+
+__Note that this is a public repository, as is mirrored at [GitHub as ukwa/npld-access-stack](https://github.com/ukwa/npld-access-stack)__
+
+
 - [Introduction](#introduction)
 - [To Do](#to-do)
 - [Overview](#overview)
