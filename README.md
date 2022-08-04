@@ -109,18 +109,18 @@ To provide the central services on the _BSP Stack_ and _STP Stack_, each stack r
 - A Redis service, which holds the SCU lock state for all the PyWB services.
 - A [PushProx](https://github.com/prometheus-community/PushProx) client service, which allows NGINX to be monitored by pushing metrics to a remote [Prometheus](https://prometheus.io/) service via a PushProx proxy.
 
-Each service supports two host names, the real `*.ldls.org.uk` name and a `*.beta.ldls.org.uk` version that could be used if it is necessary to test this system in parallel with the original system.  When accessed over the shared port, NGINX uses the `Host` in the request to determine which service is being called. Each PyWB service also exposes a dedicated port, but this is intended to debugging rather than production use.
+Each service supports two host names, the real `*.ldls.org.uk` name and a `*-beta.ldls.org.uk` version that could be used if it is necessary to test this system in parallel with the original system.  When accessed over the shared port, NGINX uses the `Host` in the request to determine which service is being called. Each PyWB service also exposes a dedicated port, but this is intended to debugging rather than production use.
 
 
 | Server Name           | Beta Server Name            | Shared NGINX Port | Dedicated NGINX Port | Direct PyWB Port (for debugging) |
 |-----------------------|-----------------------------|-------------------|----------------------|----------------------------------|
-| bl.ldls.org.uk        | bl.beta.ldls.org.uk         | 8100              | 8200                 | 8300                             |
-| nls.ldls.org.uk	      | nls.beta.ldls.org.uk        | 8100              | 8201                 | 8301                             |
-| llgc.ldls.org.uk      | llgc.beta.ldls.org.uk       | 8100              | 8202                 | 8302                             |
-| cam.ldls.org.uk       | cam.beta.ldls.org.uk        | 8100              | 8203                 | 8303                             |
-| bodleian.ldls.org.uk  | bodleian.beta.ldls.org.uk   | 8100              | 8204                 | 8304                             |
-| tcdlibrary.ldls.org.uk| tcdlibrary.beta.ldls.org.uk | 8100              | 8205                 | 8305                             |
-| blstaff.ldls.org.uk   | blstaff.beta.ldls.org.uk    | 8100              | 8209                 | 8309                             |
+| bl.ldls.org.uk        | bl-beta.ldls.org.uk         | 8100              | 8200                 | 8300                             |
+| nls.ldls.org.uk	| nls-beta.ldls.org.uk        | 8100              | 8201                 | 8301                             |
+| llgc.ldls.org.uk      | llgc-beta.ldls.org.uk       | 8100              | 8202                 | 8302                             |
+| cam.ldls.org.uk       | cam-beta.ldls.org.uk        | 8100              | 8203                 | 8303                             |
+| bodleian.ldls.org.uk  | bodleian-beta.ldls.org.uk   | 8100              | 8204                 | 8304                             |
+| tcdlibrary.ldls.org.uk| tcdlibrary-beta.ldls.org.uk | 8100              | 8205                 | 8305                             |
+| blstaff.ldls.org.uk   | blstaff-beta.ldls.org.uk    | 8100              | 8209                 | 8309                             |
 
 
 This NGINX setup assumes that any failover redirection, SSL encryption, authentication, token validation or user identification has all been handled upstream of this service stack. 
