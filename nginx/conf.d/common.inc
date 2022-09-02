@@ -1,3 +1,9 @@
+# 
+# Use only relative redirects, so upstream proxies can function without needing complex configuration:
+# 
+
+absolute_redirect off;
+
 #
 # Common redirects to support the original URLs, included in other configs:
 #
