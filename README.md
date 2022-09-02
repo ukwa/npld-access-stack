@@ -14,6 +14,7 @@ __Note that this is a public repository, as is mirrored on GitHub as [ukwa/npld-
   - [Pre-requisites](#pre-requisites)
   - [Operations](#operations)
     - [Deploying and Updating the Stack](#deploying-and-updating-the-stack)
+    - [Configuring an upstream proxy](#configuring-an-upstream-proxy)
     - [Setting up logging](#setting-up-logging)
     - [Setting up monitoring](#setting-up-monitoring)
     - [Updating the Block List](#updating-the-block-list)
@@ -214,6 +215,11 @@ docker stack rm access_rrwb
 # Wait a couple of minutes while everything gets tidied up, then 
 ./deploy-rrwb-dev.sh
 ```
+
+#### Configuring an upstream proxy
+
+Any upstream proxy talking to these services need to set the host and protocol/scheme so that any URLs returned are correct. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`.
+
 #### Setting up logging
 
 _TBA: How should logging be set up, for MI and for security?_
