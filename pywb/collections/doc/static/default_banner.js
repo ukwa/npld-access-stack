@@ -153,8 +153,8 @@ This file is part of pywb, https://github.com/webrecorder/pywb
     this.banner.setAttribute('lang', 'en');
 
     if (window.banner_info.logoImg) {
-      var logo = document.createElement("a");
-      logo.setAttribute("href", "/" + (window.banner_info.locale ? window.banner_info.locale + "/" : ""));
+      var logo = document.createElement("div");
+      //logo.setAttribute("href", "/" + (window.banner_info.locale ? window.banner_info.locale + "/" : ""));
       logo.setAttribute("class", "_wb_linked_logo");
 
       var logoContents = "";
@@ -286,7 +286,7 @@ This file is part of pywb, https://github.com/webrecorder/pywb
     //capture_str += "<span class='_wb_capture_date'>";
 
     //if (is_live) {
-      title_str = window.banner_info.liveMsg + " " + title_str;
+    //  title_str = window.banner_info.liveMsg + " " + title_str;
     //  capture_str += "<b>" + window.banner_info.liveMsg + "&nbsp;</b>";
     //}
 
