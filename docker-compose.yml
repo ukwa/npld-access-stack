@@ -15,7 +15,8 @@ services:
       - ./pywb/staff.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_SHARED}:/ukwa_pywb/acl/
       - ./logos/logo-staff.png:/ukwa_pywb/static/ukwa-2018-w-med.png
-      - ./logos/logo-staff.png:/ukwa_pywb/static/ukwa-2018-w-sml.png # 42~ x 26
+      # Smaller logo is 42~ x 26
+      - ./logos/logo-staff-sml.png:/ukwa_pywb/static/ukwa-2018-w-sml.png
       - ./pywb/collections:/ukwa_pywb/collections
     depends_on:
       - redis
