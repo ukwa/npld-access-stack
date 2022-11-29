@@ -15,6 +15,7 @@ services:
       - ./pywb/staff.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_SHARED}:/ukwa_pywb/acl/
       - ./logos/logo-staff.png:/ukwa_pywb/static/ukwa-2018-w-med.png
+      - ./pywb/collections:/ukwa_pywb/collections
     depends_on:
       - redis
       - doc-streamer
@@ -37,6 +38,7 @@ services:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_SHARED}:/ukwa_pywb/acl/
       - ./logos/bl_logo.png:/ukwa_pywb/static/ukwa-2018-w-med.png
+      - ./pywb/collections:/ukwa_pywb/collections
     depends_on:
       - redis
       - doc-streamer
@@ -55,6 +57,7 @@ services:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_SHARED}:/ukwa_pywb/acl/
       - ./logos/nls_logo.png:/ukwa_pywb/static/ukwa-2018-w-med.png
+      - ./pywb/collections:/ukwa_pywb/collections
     depends_on:
       - redis
       - doc-streamer
@@ -73,6 +76,7 @@ services:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_SHARED}:/ukwa_pywb/acl/
       - ./logos/llgc_logo.png:/ukwa_pywb/static/ukwa-2018-w-med.png
+      - ./pywb/collections:/ukwa_pywb/collections
     depends_on:
       - redis
       - doc-streamer
@@ -91,6 +95,7 @@ services:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_SHARED}:/ukwa_pywb/acl/
       - ./logos/cambridge_logo.png:/ukwa_pywb/static/ukwa-2018-w-med.png
+      - ./pywb/collections:/ukwa_pywb/collections
     depends_on:
       - redis
       - doc-streamer
@@ -109,6 +114,7 @@ services:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_SHARED}:/ukwa_pywb/acl/
       - ./logos/bodleian_logo.png:/ukwa_pywb/static/ukwa-2018-w-med.png
+      - ./pywb/collections:/ukwa_pywb/collections
     depends_on:
       - redis
       - doc-streamer
@@ -127,6 +133,7 @@ services:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_SHARED}:/ukwa_pywb/acl/
       - ./logos/trinity_logo.png:/ukwa_pywb/static/ukwa-2018-w-med.png
+      - ./pywb/collections:/ukwa_pywb/collections
     depends_on:
       - redis
       - doc-streamer
