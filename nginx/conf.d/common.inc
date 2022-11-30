@@ -19,12 +19,12 @@ location /welcome.html {
 
 location / {
     # Explicit ARKs
-    rewrite ^/ark:/(\d+)/([^\/]+) /doc/20130401000000/http://doc-streamer:8000/ark:/$1/$2/ permanent;
+    rewrite ^/ark:/(\d+)/([^\/]+) /en/doc/20130401000000/http://doc-streamer:8000/ark:/$1/$2/ permanent;
     
     # Implied ARKs (starting with e.g. vdc_ or tvdc_ for IRC)
-    rewrite ^/(vd[^\/]+) /doc/20130401000000/http://doc-streamer:8000/ark:/81055/$1/ permanent;
-    rewrite ^/(tvd[^\/]+) /doc/20130401000000/http://doc-streamer:8000/ark:/81055/$1/ permanent;
+    rewrite ^/(vd[^\/]+) /en/doc/20130401000000/http://doc-streamer:8000/ark:/81055/$1/ permanent;
+    rewrite ^/(tvd[^\/]+) /en/doc/20130401000000/http://doc-streamer:8000/ark:/81055/$1/ permanent;
 
     # UKWA IDs e.g. TIMESTAMP/URL:
-    rewrite ^/(\d+)/(.*)$ /web/$1/$2 permanent;
+    rewrite ^/(\d+)/(.*)$ /en/web/$1/$2 permanent;
 }

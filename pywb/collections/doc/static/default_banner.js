@@ -204,7 +204,7 @@ This file is part of pywb, https://github.com/webrecorder/pywb
         }
       }
 
-      //ancillaryLinks.appendChild(languages);
+      ancillaryLinks.appendChild(languages);
     }
 
     this.banner.appendChild(ancillaryLinks);
