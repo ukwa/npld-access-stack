@@ -3,7 +3,7 @@ build:
   script: echo "Define your build script!"
   environment: dev
 
-deploy-dev:
+deploy:
   stage: deploy
   environment: dev
   variables:
