@@ -1,8 +1,8 @@
 stages:
-- dev
+- deploy
 
-dev:
-  stage: dev
+deploy_dev:
+  stage: deploy
   variables:
     LOCKS_AUTH: $LOCKS_AUTH_DEV
     STORAGE_PATH_SHARED: /mnt/nfs/data/airflow/data_exports
