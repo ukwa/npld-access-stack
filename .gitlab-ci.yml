@@ -1,6 +1,5 @@
 stages:
 - dev
-# - beta
 
 dev:
   stage: dev
@@ -29,4 +28,6 @@ dev:
     - master
   tags:
     - dev
+    - review-apps
+    - deploy
 
