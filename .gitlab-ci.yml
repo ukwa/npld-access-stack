@@ -27,6 +27,8 @@ deploy_dev:
     - echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
     - echo "Removing current stack so deployment is completely fresh..."
     - docker stack rm access_rrwb
+    - echo "Waiting for the services to get cleaned up..."
+    - sleep 30
     - echo "Deploying the stack..."
     - docker stack deploy -c docker-compose.yml -c docker-compose.dev.yml access_rrwb
   only:
