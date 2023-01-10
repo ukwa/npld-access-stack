@@ -1,7 +1,9 @@
-stages:
-- deploy
+build:
+  stage: build
+  script: echo "Define your build script!"
+  environment: dev
 
-deploy_dev:
+deploy-dev:
   stage: deploy
   environment: dev
   variables:
