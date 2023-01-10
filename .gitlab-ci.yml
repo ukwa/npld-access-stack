@@ -26,7 +26,6 @@ deploy_dev:
     - echo "PUSHPROX_FQDN = $PUSHPROX_FQDN"
     - echo "EXTRA_CONFIG = $EXTRA_CONFIG"
     - echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
-    - export
     - docker stack deploy -c docker-compose.yml $EXTRA_CONFIG access_rrwb
   only:
     - main
@@ -55,7 +54,6 @@ deploy_beta:
     - echo "PUSHPROX_FQDN = $PUSHPROX_FQDN"
     - echo "EXTRA_CONFIG = $EXTRA_CONFIG"
     - echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
-    - export
     - docker stack deploy -c docker-compose.yml access_rrwb
   only:
     - main
