@@ -1,13 +1,11 @@
-build:
-  stage: build
-  script: echo "Define your build script!"
-  environment: dev
-  tags:
-  - dev
+stages:
+- deploy
 
-deploy-dev:
+deploy_dev:
   stage: deploy
-  environment: dev
+  environment:
+    name: dev
+    url: http://dev1.n45.wa.bl.uk:8209/
   variables:
     LOCKS_AUTH: $LOCKS_AUTH_DEV
     STORAGE_PATH_SHARED: /mnt/nfs/data/airflow/data_exports
@@ -27,7 +25,7 @@ deploy-dev:
     - export
     - docker stack deploy -c docker-compose.yml $EXTRA_CONFIG access_rrwb
   only:
-    - master
+    - main
   tags:
     - dev
     - review-apps
