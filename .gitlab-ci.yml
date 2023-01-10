@@ -32,13 +32,13 @@ deploy_dev:
     - deploy
 
 
-deploy_review:
-  stage: deploy
-  script:
-    - echo "Add script here that deploys the code to your infrastructure"
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    url: https://$CI_ENVIRONMENT_SLUG.example.com
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#deploy_review:
+#  stage: deploy
+#  script:
+#    - echo "Add script here that deploys the code to your infrastructure"
+#  environment:
+#    name: review/$CI_COMMIT_REF_NAME
+#    url: https://$CI_ENVIRONMENT_SLUG.example.com
+#  rules:
+#    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
