@@ -3,6 +3,7 @@ stages:
 
 deploy_dev:
   stage: deploy
+  environment: dev
   variables:
     LOCKS_AUTH: $LOCKS_AUTH_DEV
     STORAGE_PATH_SHARED: /mnt/nfs/data/airflow/data_exports
@@ -21,9 +22,6 @@ deploy_dev:
     - echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
     - export
     - docker stack deploy -c docker-compose.yml $EXTRA_CONFIG access_rrwb
-  environment:
-    name: dev
-    url: http://dev1.n45.wa.bl.uk:8209/
   only:
     - master
   tags:
