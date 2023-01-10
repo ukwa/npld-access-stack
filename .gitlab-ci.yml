@@ -2,8 +2,10 @@ build:
   stage: build
   script: echo "Define your build script!"
   environment: dev
+  tags:
+  - dev
 
-deploy:
+deploy-dev:
   stage: deploy
   environment: dev
   variables:
