@@ -35,6 +35,8 @@ deploy_dev:
 
 deploy_beta:
   stage: deploy
+  # Only deploy manually
+  when: manual
   environment:
     name: beta
     url: http://beta1.n45.wa.bl.uk:8209/
