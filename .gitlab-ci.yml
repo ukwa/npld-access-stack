@@ -29,6 +29,33 @@ deploy_dev:
   tags:
     - dev
 
+deploy_beta:
+  stage: deploy
+  environment:
+    name: beta
+    url: http://beta1.n45.wa.bl.uk:8209/
+  variables:
+    LOCKS_AUTH: $LOCKS_AUTH_DEV
+    STORAGE_PATH_SHARED: /mnt/nfs/data/airflow/data_exports
+    PYWB_IMAGE: ukwa/ukwa-pywb:custom-viewers
+    PUSHPROX_URL: http://beta1.n45.wa.bl.uk:9494/
+    PUSHPROX_FQDN: beta1.n45.wa.bl.uk
+    DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
+  script:
+    - echo "LOCKS_AUTH = $LOCKS_AUTH"
+    - echo "STORAGE_PATH_SHARED = $STORAGE_PATH_SHARED"
+    - echo "PYWB_IMAGE = $PYWB_IMAGE"
+    - echo "PUSHPROX_URL = $PUSHPROX_URL"
+    - echo "PUSHPROX_FQDN = $PUSHPROX_FQDN"
+    - echo "EXTRA_CONFIG = $EXTRA_CONFIG"
+    - echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
+    - export
+    - docker stack deploy -c docker-compose.yml access_rrwb
+  only:
+    - main
+  tags:
+    - beta
+
 
 #deploy_review:
 #  stage: deploy
