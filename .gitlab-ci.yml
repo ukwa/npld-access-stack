@@ -1,6 +1,10 @@
 stages:
 - deploy
 
+variables:
+  # Our servers old git version does not support fetching, see https://stackoverflow.com/questions/56663096/gitlab-runner-doesnt-work-on-a-specific-project
+  GIT_STRATEGY: clone
+
 deploy_dev:
   stage: deploy
   environment:
