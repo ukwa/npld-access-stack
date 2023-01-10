@@ -27,4 +27,8 @@ location / {
 
     # UKWA IDs e.g. TIMESTAMP/URL:
     rewrite ^/(\d+)/(.*)$ /en/web/$1/$2 permanent;
+
+    # Add a index page for internal use:
+    root   /var/www/nginx-default;
+    index  index.html index.htm;
 }

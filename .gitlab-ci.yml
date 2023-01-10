@@ -16,7 +16,6 @@ deploy_dev:
     PYWB_IMAGE: ukwa/ukwa-pywb:custom-viewers
     PUSHPROX_URL: http://dev1.n45.wa.bl.uk:9494/
     PUSHPROX_FQDN: dev1.n45.wa.bl.uk
-    EXTRA_CONFIG: -c docker-compose.dev.yml
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
   script:
     - echo "LOCKS_AUTH = $LOCKS_AUTH"
@@ -26,7 +25,10 @@ deploy_dev:
     - echo "PUSHPROX_FQDN = $PUSHPROX_FQDN"
     - echo "EXTRA_CONFIG = $EXTRA_CONFIG"
     - echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
-    - docker stack deploy -c docker-compose.yml $EXTRA_CONFIG access_rrwb
+    - echo "Removing current stack so deployment is completely fresh..."
+    - docker stack rm access_rrwb
+    - echo "Deploying the stack..."
+    - docker stack deploy -c docker-compose.yml -c docker-compose.dev.yml access_rrwb
   only:
     - main
   tags:
