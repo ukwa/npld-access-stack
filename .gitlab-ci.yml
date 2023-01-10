@@ -28,8 +28,6 @@ deploy_dev:
     - main
   tags:
     - dev
-    - review-apps
-    - deploy
 
 
 #deploy_review:
