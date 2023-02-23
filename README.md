@@ -155,7 +155,11 @@ When running operations on the server, the operator should use a non-root user a
 [access@demo ~]$ docker run hello-world
 ```
 
+All the necessary base software and configuration is documented (internally) at https://git.wa.bl.uk/ukwa/packages/ukwa-npld-access-support-packages
+
 #### Deploying and Updating the Stack
+
+Routine deployments will be handled by GitLab CI/CD, as this makes software deployment and configuration much easier. See [.gitlab-ci.yml](./.gitlab-ci.yml) for details. Manual deployment works as follows.
 
 First get the `ukwa-services` repository and change to the relevant directory:
 
@@ -344,7 +348,10 @@ Note that to avoid copies of material being taken away, libraries should not all
 
 ## Testing
 
-_...TBA: Add or link to suite of test cases and acceptance criteria..._
+_...TBA: Add routine testing via Robot Framework? Is that possible given the deployment context?_
+
+The formal User Acceptance Testing script for this system is available via the LDL Teams site hosted by the BL. [This link](https://bluk.sharepoint.com/:f:/s/PRJ_LDLTechnicalGroup/Ep4fjZQwupVEhSal19TleyABRGRIcKpD3RRuI2ee1k8Rvw?e=hIcu8q) should take you to the right folder if you are allowed to access it.
+
 
 ## Monitoring
 
