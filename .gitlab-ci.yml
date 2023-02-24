@@ -38,7 +38,8 @@ deploy_dev:
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
     EXTRA_CONFIG: -c docker-compose.dev.yml
   script:
-    - docker login git.wa.bl.uk --username ${CI_DEPENDENCY_PROXY_USER} --password ${CI_DEPENDENCY_PROXY_PASSWORD}
+    - echo "Login with CI credential, using server string with port so it exactly matches the CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX..."
+    - docker login git.wa.bl.uk:443 --username ${CI_DEPENDENCY_PROXY_USER} --password ${CI_DEPENDENCY_PROXY_PASSWORD}
     - ./deploy-rrwb.sh
   only:
     - main
@@ -126,6 +127,6 @@ Get Metrics 2/2:
     - job: Get Metrics 1/2
       artifacts: true
   script:
-    - cat nginx.metrics
+    - head nginx.metrics.dev
   tags:
     - beta

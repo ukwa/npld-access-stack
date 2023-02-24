@@ -8,7 +8,7 @@ services:
   # Staff Access Service Configuration (no locks):
   # -------------------------------------------------------------
   pywb-staff:
-    image: ${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "TLDEXTRACT_CACHE_TIMEOUT=0.1"
     volumes:
@@ -29,7 +29,7 @@ services:
   # Reading Room Wayback with SCU locks, per LDL:
   # -------------------------------------------------------------
   pywb-bl:
-    image: ${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/0" # Locks stored in Redis DB 0
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -49,7 +49,7 @@ services:
       - "8300:8080"
 
   pywb-nls:
-    image: ${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/1"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -69,7 +69,7 @@ services:
       - "8301:8080"
 
   pywb-llgc:
-    image: ${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/2"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -89,7 +89,7 @@ services:
       - "8302:8080"
 
   pywb-cam:
-    image: ${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/3"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -109,7 +109,7 @@ services:
       - "8303:8080"
 
   pywb-bod:
-    image: ${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/4"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -129,7 +129,7 @@ services:
       - "8304:8080"
 
   pywb-tcd:
-    image: ${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/5"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -155,38 +155,40 @@ services:
 
   # Redis service to hold locks
   redis:
-    image: redis:6
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/redis:6
 
   # PushProx to enable integration with Prometheus monitoring
   pushprox-client:
-    image: prom/pushprox:v0.1.0
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/prom/pushprox:v0.1.0
     entrypoint: '/app/pushprox-client'
     command:
       - '--fqdn=${PUSHPROX_FQDN}' # Should point to the host server so any ports can be accessed.
       - '--proxy-url=${PUSHPROX_URL}'
 
-  # Add Prometheus for direct access to metrics
-  # prometheus:
-  #   image: prom/prometheus
-  #   ports:
-  #     - 9191:9090
-  #   volumes:
-  #     - ./prometheus:/etc/prometheus
-  #     - "${STORAGE_PATH_PROMETHEUS}:/prometheus"
-  #   user: root
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-  #     - '--storage.tsdb.path=/prometheus'
-  #     - '--storage.tsdb.retention.time=400d'
-  #     - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-  #     - '--web.console.templates=/usr/share/prometheus/consoles'
-  #     - '--web.external-url=http://${CRAWL_HOST_LAN_IP}:9191/'
-  #     - '--web.enable-admin-api'
-  #     - '--web.enable-lifecycle'
+  # Add Prometheus for direct access to metrics:s
+  prometheus:
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/prom/prometheus
+    ports:
+      - 3990:9090
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - "${STORAGE_PATH_PROMETHEUS}:/prometheus"
+    user: root
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=400d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+#      - '--web.external-url=http://${CRAWL_HOST_LAN_IP}:9191/'
+      - '--web.enable-admin-api'
+      - '--web.enable-lifecycle'
+    depends_on:
+      - nginx
 
   # Add some setup via NGINX
   nginx:
-    image: nginx:1
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/nginx:1
     command: /opt/mtail/entrypoint.sh
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d/:ro
