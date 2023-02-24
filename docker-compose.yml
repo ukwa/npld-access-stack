@@ -157,14 +157,6 @@ services:
   redis:
     image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/redis:6
 
-  # PushProx to enable integration with Prometheus monitoring
-  pushprox-client:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/prom/pushprox:v0.1.0
-    entrypoint: '/app/pushprox-client'
-    command:
-      - '--fqdn=${PUSHPROX_FQDN}' # Should point to the host server so any ports can be accessed.
-      - '--proxy-url=${PUSHPROX_URL}'
-
   # Add Prometheus for direct access to metrics:s
   prometheus:
     image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/prom/prometheus

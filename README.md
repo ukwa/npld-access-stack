@@ -14,6 +14,7 @@ __Note that this is a public repository, as is mirrored on GitHub as [ukwa/npld-
   - [Pre-requisites](#pre-requisites)
   - [Operations](#operations)
     - [Deploying and Updating the Stack](#deploying-and-updating-the-stack)
+    - [Deploying and Updating the Stack Manually](#deploying-and-updating-the-stack-manually)
     - [Configuring an upstream proxy](#configuring-an-upstream-proxy)
     - [Setting up logging](#setting-up-logging)
     - [Setting up monitoring](#setting-up-monitoring)
@@ -155,11 +156,21 @@ When running operations on the server, the operator should use a non-root user a
 [access@demo ~]$ docker run hello-world
 ```
 
-All the necessary base software and configuration is documented (internally) at https://git.wa.bl.uk/ukwa/packages/ukwa-npld-access-support-packages
+All the necessary base software and configuration is documented (internally) at https://git.wa.bl.uk/ukwa/packages/ukwa-npld-access-support-packages .  This includes setting up the GitLab Runner that is used to manage routine deployment and maintenance.
 
 #### Deploying and Updating the Stack
 
-Routine deployments will be handled by GitLab CI/CD, as this makes software deployment and configuration much easier. See [.gitlab-ci.yml](./.gitlab-ci.yml) for details. Manual deployment works as follows.
+Routine deployments will be handled by GitLab CI/CD, as this makes software deployment and configuration much easier. See [`.gitlab-ci.yml`](./.gitlab-ci.yml) for details. 
+
+The GitLab CI/CD deployment to work, there needs to be a shared storage folder with `docker` group write permissions somewhere, and this needs to referenced in the `.gitlab-ci.yml` file along with any other context-dependant configuration. Any sensitive/secret values are also handled through GitLab.
+
+The GitLab CI/CD pipeline can be seen at https://git.wa.bl.uk/ukwa/services/ukwa-npld-access-stack/-/pipelines - this interface can be used to inspect the automated deployments, and to initiate the manual deployments to IRC and LIVE environments.
+
+Note that this deployment uses GitLab's [Dependency Proxy](https://docs.gitlab.com/ee/user/packages/dependency_proxy/) feature to download and cache the required Docker images. Crucially, the CI/CD job credentials are used to authorize access to the Dependency Proxy, and these are only valid for the duration of the job. Therefore, Docker cannot pull images outside this time, unless you explicitly do a `docker login git.wa.bl.uk:443 ...`.  This is why it is important that the Docker Stack starter script waits for the Stack to spin up.
+
+#### Deploying and Updating the Stack Manually
+
+If manual deployment is required, it works as follows. 
 
 First get the `ukwa-services` repository and change to the relevant directory:
 
@@ -241,9 +252,9 @@ _The precise details depend on how M.I. integration works._
 
 #### Setting up monitoring
 
-The NGINX metrics are exposed on port 3903, but are not accessible directly, due to DLS network restrictions. However, we are allowed to make some outward connections, so Prometheus monitoring can be facilitated by PushProx.
+The NGINX metrics are exposed on port 3903, and also accessible via a Prometheus instance on port 3990.  These metrics can be fetched and forwarded using GitHub Runners, or if permitted by the security team, accessed via dedicated firewall rules.
 
-The Web Archive team can ensure the proxy is in place, and configure their monitoring services to gather metrics from the live service. there should not be any further setup required.
+The Web Archive team can configure their monitoring services to gather metrics from the live service. There should not be any further setup required.
 
 #### Updating the Block List
 
