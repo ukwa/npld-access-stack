@@ -166,7 +166,12 @@ The GitLab CI/CD deployment to work, there needs to be a shared storage folder w
 
 ```
 mkdir /home/axsadmin/service-storage
-sudo chgrp docker /home/axsadmin/service-storage
+# Set up permissions, using setguid to allow users to write files in easily:
+chgrp docker /home/axsadmin/service-storage
+chmod g+s /home/axsadmin/service-storage
+# Also needs parent folder to be accessible to this group:
+chgrp docker /home/axsadmin
+chmod g+rx /home/axsadmin
 ```
 
 The GitLab CI/CD pipeline can be seen at https://git.wa.bl.uk/ukwa/services/ukwa-npld-access-stack/-/pipelines - this interface can be used to inspect the automated deployments, and to initiate the manual deployments to IRC and LIVE environments.
