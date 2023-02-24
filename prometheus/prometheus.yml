@@ -2,6 +2,9 @@ global:
   external_labels:
     system: 'rrwb'
     system_name: 'reading-room-wayback'
+  relabel_configs:
+    - source_labels: [__meta_dockerswarm_node_hostname]
+      target_label: docker_node
 
 scrape_configs:
 
