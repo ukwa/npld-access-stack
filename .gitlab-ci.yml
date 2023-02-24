@@ -14,7 +14,7 @@ configure_dev:
     STORAGE_PATH_SHARED: /mnt/nfs/data/npld-access-stack
   script:
     - cd ${STORAGE_PATH_SHARED}
-    - mkdir prometheus-data
+    - mkdir -p prometheus-data
     - rm -fr wayback_excludes_update
     - git clone https://git.wa.bl.uk/bl-services/wayback_excludes_update.git
   only:
