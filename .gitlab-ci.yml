@@ -41,6 +41,8 @@ deploy_dev:
     # And then added the values as CI/CD variables here: https://git.wa.bl.uk/ukwa/services/ukwa-npld-access-stack/-/settings/ci_cd
     # i.e. that's where DEPLOY_TOKEN_TOKEN and DEPLOY_TOKEN_USERNAME are defined.
     - echo "Log into depdendency proxy with CI credentials..."
+    - echo $DEPLOY_TOKEN_USERNAME
+    - echo $DEPLOY_TOKEN_TOKEN
     - echo $DEPLOY_TOKEN_TOKEN | docker login -u $DEPLOY_TOKEN_USERNAME --password-stdin $CI_DEPENDENCY_PROXY_SERVER
     - ./deploy-rrwb.sh
   only:
