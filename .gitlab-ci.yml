@@ -9,15 +9,15 @@ variables:
   GIT_STRATEGY: clone
   # Shared Docker-group-writable storage paths for different environments:
   DEV_STORAGE_PATH: /mnt/nfs/data/npld-access-stack
-  DLS_STORAGE_PATH: /home/axsadmin/rrwb
-
+  DLS_STORAGE_PATH: /home/axsadmin/service-storage
 
 # -------------------------------------------------------------------------------------
-# Job templates re-used across stages
+# Job templates re-used across stages, so each job only specifies what's different
 # -------------------------------------------------------------------------------------
 
 .configure:
-  stage: configure
+  variables:
+    STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
   script:
     - mkdir -p ${STORAGE_PATH_SHARED}/prometheus-data
     - ./clone-or-pull-acls.sh
@@ -27,12 +27,13 @@ variables:
 .deploy:
   variables:
     LOCKS_AUTH: $LOCKS_AUTH_DEV
+    STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
     STORAGE_PATH_ACL: ${STORAGE_PATH_SHARED}/wayback_excludes_update/ldukwa/acl
     STORAGE_PATH_PROMETHEUS: ${STORAGE_PATH_SHARED}/prometheus-data
     PYWB_IMAGE: ukwa/ukwa-pywb:custom-viewers
     EXTRA_CONFIG: 
   before_script:
-    # These credentials are only valid during the time the job runs (TBC???)
+    # These credentials are only valid during the time the job runs, so deployment must wait for images to be fetched.
     - echo $CI_DEPENDENCY_PROXY_PASSWORD | docker login --username $CI_DEPENDENCY_PROXY_USER --password-stdin $CI_DEPENDENCY_PROXY_SERVER
   script:
     - ./deploy-rrwb.sh
@@ -71,21 +72,20 @@ deploy_dev:
 configure_irc:
   extends: .configure
   stage: staging
-  variables:
-    STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
+  # Only run manually
+  when: manual
   tags:
     - irc-bsp-npld.dom.test
 
 deploy_irc:
   extends: .deploy
   stage: staging
-  # Only deploy manually
+  # Only run manually
   when: manual
   environment:
     name: irc-bsp
     url: https://blstaff-alpha.ldls.org.uk/
   variables:
-    STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
     DLS_ACCESS_SERVER: http://192.168.217.72
   tags: 
     - irc-bsp-npld.dom.test
@@ -95,7 +95,41 @@ deploy_irc:
 # Production deployment in LIVE environment
 # -------------------------------------------------------------------------------------
 
+configure_live_bsp:
+  extends: .configure
+  stage: production
+  when: manual # Only run manually
+  tags:
+    - dls-bsp-npld.dom.live
 
+deploy_live_bsp:
+  extends: .deploy
+  stage: production
+  environment:
+    name: live-bsp
+    url: https://blstaff-beta.ldls.org.uk/
+  variables:
+    DLS_ACCESS_SERVER: http://192.168.218.72
+  tags: 
+    - dls-bsp-npld.dom.live
+
+configure_live_lon:
+  extends: .configure
+  stage: production
+  when: manual # Only run manually
+  tags:
+    - dls-lon-npld.dom.live
+
+deploy_live_lon:
+  extends: .deploy
+  stage: production
+  environment:
+    name: live-lon
+    url: https://blstaff-beta.ldls.org.uk/
+  variables:
+    DLS_ACCESS_SERVER: http://192.168.218.72
+  tags: 
+    - dls-lon-npld.dom.live
 
 # -------------------------------------------------------------------------------------
 # Checks and metrics

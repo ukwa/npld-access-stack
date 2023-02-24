@@ -162,7 +162,12 @@ All the necessary base software and configuration is documented (internally) at 
 
 Routine deployments will be handled by GitLab CI/CD, as this makes software deployment and configuration much easier. See [`.gitlab-ci.yml`](./.gitlab-ci.yml) for details. 
 
-The GitLab CI/CD deployment to work, there needs to be a shared storage folder with `docker` group write permissions somewhere, and this needs to referenced in the `.gitlab-ci.yml` file along with any other context-dependant configuration. Any sensitive/secret values are also handled through GitLab.
+The GitLab CI/CD deployment to work, there needs to be a shared storage folder with `docker` group write permissions somewhere, and this needs to referenced in the `.gitlab-ci.yml` file along with any other context-dependant configuration. Any sensitive/secret values are also handled through GitLab. At the time of writing, the `/home/axsadmin/service-storage` folder is used across all DLS deployments:
+
+```
+mkdir /home/axsadmin/service-storage
+sudo chgrp docker /home/axsadmin/service-storage
+```
 
 The GitLab CI/CD pipeline can be seen at https://git.wa.bl.uk/ukwa/services/ukwa-npld-access-stack/-/pipelines - this interface can be used to inspect the automated deployments, and to initiate the manual deployments to IRC and LIVE environments.
 
