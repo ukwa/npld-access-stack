@@ -1,40 +1,36 @@
 stages:
-- configure
-- deploy
-- check
+- test       # Deploy to a DEV system for testing
+- staging    # Deploy to IRC/NLE (manually)
+- production # Deploy to LIVE (manually)
+- check      # Run checks across all environments
 
 variables:
   # Our servers old git version does not support fetching, see https://stackoverflow.com/questions/56663096/gitlab-runner-doesnt-work-on-a-specific-project
   GIT_STRATEGY: clone
+  # Shared Docker-group-writable storage paths for different environments:
+  DEV_STORAGE_PATH: /mnt/nfs/data/npld-access-stack
+  DLS_STORAGE_PATH: /home/axsadmin/rrwb
 
-configure_dev:
+
+# -------------------------------------------------------------------------------------
+# Job templates re-used across stages
+# -------------------------------------------------------------------------------------
+
+.configure:
   stage: configure
-  variables:
-    # Needs a docker group writable space for storing shared files:
-    STORAGE_PATH_SHARED: /mnt/nfs/data/npld-access-stack
   script:
     - mkdir -p ${STORAGE_PATH_SHARED}/prometheus-data
     - ./clone-or-pull-acls.sh
   only:
     - main
-  tags:
-    - dev  
 
-deploy_dev:
-  stage: deploy
-  environment:
-    name: dev
-    url: http://dev1.n45.wa.bl.uk:8209/
+.deploy:
   variables:
     LOCKS_AUTH: $LOCKS_AUTH_DEV
-    STORAGE_PATH_SHARED: /mnt/nfs/data/npld-access-stack
     STORAGE_PATH_ACL: ${STORAGE_PATH_SHARED}/wayback_excludes_update/ldukwa/acl
     STORAGE_PATH_PROMETHEUS: ${STORAGE_PATH_SHARED}/prometheus-data
     PYWB_IMAGE: ukwa/ukwa-pywb:custom-viewers
-    PUSHPROX_URL: http://dev1.n45.wa.bl.uk:9494/
-    PUSHPROX_FQDN: dev1.n45.wa.bl.uk
-    DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
-    EXTRA_CONFIG: -c docker-compose.dev.yml
+    EXTRA_CONFIG: 
   before_script:
     # These credentials are only valid during the time the job runs (TBC???)
     - echo $CI_DEPENDENCY_PROXY_PASSWORD | docker login --username $CI_DEPENDENCY_PROXY_USER --password-stdin $CI_DEPENDENCY_PROXY_SERVER
@@ -42,64 +38,63 @@ deploy_dev:
     - ./deploy-rrwb.sh
   only:
     - main
+
+# -------------------------------------------------------------------------------------
+# Test Stage deployment in DEV environment
+# -------------------------------------------------------------------------------------
+
+configure_dev:
+  extends: .configure
+  stage: test
+  variables:
+    STORAGE_PATH_SHARED: ${DEV_STORAGE_PATH}
+  tags:
+    - dev  
+
+deploy_dev:
+  extends: .deploy
+  stage: test
+  environment:
+    name: dev
+    url: http://dev1.n45.wa.bl.uk:8209/
+  variables:
+    STORAGE_PATH_SHARED: ${DEV_STORAGE_PATH}
+    DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
+    EXTRA_CONFIG: -c docker-compose.dev.yml
   tags:
     - dev
 
-deploy_beta:
-  stage: deploy
-  # Only deploy manually
-  when: manual
-  environment:
-    name: beta
-    url: http://beta1.n45.wa.bl.uk:8209/
-  variables:
-    LOCKS_AUTH: $LOCKS_AUTH_DEV
-    STORAGE_PATH_SHARED: /mnt/nfs/data/airflow/data_exports
-    PYWB_IMAGE: ukwa/ukwa-pywb:custom-viewers
-    PUSHPROX_URL: http://beta1.n45.wa.bl.uk:9494/
-    PUSHPROX_FQDN: beta1.n45.wa.bl.uk
-    DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
-  script:
-    - ./deploy-rrwb.sh
-  only:
-    - main
-  tags:
-    - beta
+# -------------------------------------------------------------------------------------
+# Staging deployment in IRC environment
+# -------------------------------------------------------------------------------------
 
-#
-# This deploys to the IRC server, for evaluation prior to updating production:
-#
+configure_irc:
+  extends: .configure
+  stage: staging
+  variables:
+    STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
+  tags:
+    - irc-bsp-npld.dom.test
+
 deploy_irc:
-  stage: deploy
+  extends: .deploy
+  stage: staging
   # Only deploy manually
   when: manual
   environment:
     name: irc-bsp
     url: https://blstaff-alpha.ldls.org.uk/
   variables:
-    PYWB_IMAGE: ukwa/ukwa-pywb:custom-viewers
-    LOCKS_AUTH: $LOCKS_AUTH_DEV
-    STORAGE_PATH_SHARED: /home/axsadmin/rrwb
+    STORAGE_PATH_SHARED:${DLS_STORAGE_PATH}
     DLS_ACCESS_SERVER: http://192.168.217.72
-    PUSHPROX_URL: http://dev1.n45.wa.bl.uk:9494/
-    PUSHPROX_FQDN: irc-bsp-npld.dom.text
-  script:
-    - ./deploy-rrwb.sh
-  only:
-    - main
   tags: 
     - irc-bsp-npld.dom.test
 
 
-#deploy_review:
-#  stage: deploy
-#  script:
-#    - echo "Add script here that deploys the code to your infrastructure"
-#  environment:
-#    name: review/$CI_COMMIT_REF_NAME
-#    url: https://$CI_ENVIRONMENT_SLUG.example.com
-#  rules:
-#    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+# -------------------------------------------------------------------------------------
+# Production deployment in LIVE environment
+# -------------------------------------------------------------------------------------
+
 
 
 # -------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 global:
   external_labels:
     system: 'rrwb'
-    system_name: 'reading-room-wayback'
+    system_name: 'npld-reading-room-access-pywb'
     hostname: '${HOSTNAME}'
 
 scrape_configs:
