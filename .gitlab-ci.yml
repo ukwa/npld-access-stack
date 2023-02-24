@@ -10,6 +10,7 @@ variables:
 configure_dev:
   stage: configure
   variables:
+    # Needs a docker group writable space for storing shared files:
     STORAGE_PATH_SHARED: /mnt/nfs/data/npld-access-stack
   script:
     - cd ${STORAGE_PATH_SHARED}
@@ -37,6 +38,7 @@ deploy_dev:
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
     EXTRA_CONFIG: -c docker-compose.dev.yml
   script:
+    - docker login gitlab.example.com --username ${CI_DEPENDENCY_PROXY_USER} --password ${CI_DEPENDENCY_PROXY_PASSWORD}
     - ./deploy-rrwb.sh
   only:
     - main
