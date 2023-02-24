@@ -85,7 +85,7 @@ deploy_irc:
     name: irc-bsp
     url: https://blstaff-alpha.ldls.org.uk/
   variables:
-    STORAGE_PATH_SHARED:${DLS_STORAGE_PATH}
+    STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
     DLS_ACCESS_SERVER: http://192.168.217.72
   tags: 
     - irc-bsp-npld.dom.test
