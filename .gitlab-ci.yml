@@ -38,7 +38,7 @@ deploy_dev:
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
     EXTRA_CONFIG: -c docker-compose.dev.yml
   script:
-    - docker login gitlab.example.com --username ${CI_DEPENDENCY_PROXY_USER} --password ${CI_DEPENDENCY_PROXY_PASSWORD}
+    - docker login git.wa.bl.uk --username ${CI_DEPENDENCY_PROXY_USER} --password ${CI_DEPENDENCY_PROXY_PASSWORD}
     - ./deploy-rrwb.sh
   only:
     - main
