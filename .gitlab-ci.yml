@@ -35,15 +35,10 @@ deploy_dev:
     PUSHPROX_FQDN: dev1.n45.wa.bl.uk
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
     EXTRA_CONFIG: -c docker-compose.dev.yml
+  before_script:
+    # These credentials are only valid during the time the job runs (TBC???)
+    - docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
   script:
-    # To pull from the Dependency Proxy, we need an auth token.
-    # We created a Deploy Token here: https://git.wa.bl.uk/ukwa/services/ukwa-npld-access-stack/-/settings/repository
-    # And then added the values as CI/CD variables here: https://git.wa.bl.uk/ukwa/services/ukwa-npld-access-stack/-/settings/ci_cd
-    # i.e. that's where DEPLOY_TOKEN_TOKEN and DEPLOY_TOKEN_USERNAME are defined.
-    - echo "Log into depdendency proxy with CI credentials..."
-    - echo $DEPLOY_TOKEN_USERNAME
-    - echo $DEPLOY_TOKEN_TOKEN
-    - echo $DEPLOY_TOKEN_TOKEN | docker login -u $DEPLOY_TOKEN_USERNAME --password-stdin $CI_DEPENDENCY_PROXY_SERVER
     - ./deploy-rrwb.sh
   only:
     - main

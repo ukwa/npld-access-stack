@@ -14,3 +14,6 @@ sleep 30
 echo "Deploying the stack..."
 echo "Running: docker stack deploy -c docker-compose.yml $EXTRA_CONFIG access_rrwb"
 docker stack deploy --with-registry-auth --prune -c docker-compose.yml $EXTRA_CONFIG access_rrwb
+echo "Sleeping to give things time to start up..."
+sleep 60
+echo "Exiting."
