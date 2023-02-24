@@ -2,7 +2,7 @@ global:
   external_labels:
     system: 'rrwb'
     system_name: 'reading-room-wayback'
-    hostname: '${HOSTNAME}''
+    hostname: '${HOSTNAME}'
 
 scrape_configs:
 

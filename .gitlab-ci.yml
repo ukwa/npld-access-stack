@@ -37,7 +37,7 @@ deploy_dev:
     EXTRA_CONFIG: -c docker-compose.dev.yml
   before_script:
     # These credentials are only valid during the time the job runs (TBC???)
-    - docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
+    - echo $CI_DEPENDENCY_PROXY_PASSWORD | docker login --username $CI_DEPENDENCY_PROXY_USER --password-stdin $CI_DEPENDENCY_PROXY_SERVER
   script:
     - ./deploy-rrwb.sh
   only:
