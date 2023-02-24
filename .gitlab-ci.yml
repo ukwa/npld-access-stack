@@ -13,8 +13,7 @@ configure_dev:
     # Needs a docker group writable space for storing shared files:
     STORAGE_PATH_SHARED: /mnt/nfs/data/npld-access-stack
   script:
-    - cd ${STORAGE_PATH_SHARED}
-    - mkdir -p prometheus-data
+    - mkdir -p ${STORAGE_PATH_SHARED}/prometheus-data
     - ./clone-or-push-acls.sh
   only:
     - main

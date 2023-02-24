@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ${STORAGE_PATH_SHARED}
+
 $FOLDER=wayback_excludes_update
 $URL = https://git.wa.bl.uk/bl-services/wayback_excludes_update.git
 
