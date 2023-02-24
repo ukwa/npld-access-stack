@@ -68,6 +68,7 @@ deploy_beta:
 # This deploys to the IRC server, for evaluation prior to updating production:
 #
 deploy_irc:
+  stage: deploy
   # Only deploy manually
   when: manual
   environment:
