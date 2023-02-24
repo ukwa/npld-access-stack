@@ -1,9 +1,25 @@
 stages:
+- configure
 - deploy
+- check
 
 variables:
   # Our servers old git version does not support fetching, see https://stackoverflow.com/questions/56663096/gitlab-runner-doesnt-work-on-a-specific-project
   GIT_STRATEGY: clone
+
+configure_dev:
+  stage: configure
+  variables:
+    STORAGE_PATH_SHARED: /mnt/nfs/data/npld-access-stack
+  script:
+    - cd ${STORAGE_PATH_SHARED}
+    - mkdir prometheus-data
+    - rm -fr wayback_excludes_update
+    - git clone https://git.wa.bl.uk/bl-services/wayback_excludes_update.git
+  only:
+    - main
+  tags:
+    - dev  
 
 deploy_dev:
   stage: deploy
@@ -12,25 +28,16 @@ deploy_dev:
     url: http://dev1.n45.wa.bl.uk:8209/
   variables:
     LOCKS_AUTH: $LOCKS_AUTH_DEV
-    STORAGE_PATH_SHARED: /mnt/nfs/data/airflow/data_exports
+    STORAGE_PATH_SHARED: /mnt/nfs/data/npld-access-stack
+    STORAGE_PATH_ACL: ${STORAGE_PATH_SHARED}/wayback_excludes_update/ldukwa/acl
+    STORAGE_PATH_PROMETHEUS: ${STORAGE_PATH_SHARED}/prometheus-data
     PYWB_IMAGE: ukwa/ukwa-pywb:custom-viewers
     PUSHPROX_URL: http://dev1.n45.wa.bl.uk:9494/
     PUSHPROX_FQDN: dev1.n45.wa.bl.uk
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
+    EXTRA_CONFIG: -c docker-compose.dev.yml
   script:
-    - echo "LOCKS_AUTH = $LOCKS_AUTH"
-    - echo "STORAGE_PATH_SHARED = $STORAGE_PATH_SHARED"
-    - echo "PYWB_IMAGE = $PYWB_IMAGE"
-    - echo "PUSHPROX_URL = $PUSHPROX_URL"
-    - echo "PUSHPROX_FQDN = $PUSHPROX_FQDN"
-    - echo "EXTRA_CONFIG = $EXTRA_CONFIG"
-    - echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
-    - echo "Removing current stack so deployment is completely fresh..."
-    - docker stack rm access_rrwb
-    - echo "Waiting for the services to get cleaned up..."
-    - sleep 30
-    - echo "Deploying the stack..."
-    - docker stack deploy -c docker-compose.yml -c docker-compose.dev.yml access_rrwb
+    - ./deploy-rrwb.sh
   only:
     - main
   tags:
@@ -51,18 +58,34 @@ deploy_beta:
     PUSHPROX_FQDN: beta1.n45.wa.bl.uk
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
   script:
-    - echo "LOCKS_AUTH = $LOCKS_AUTH"
-    - echo "STORAGE_PATH_SHARED = $STORAGE_PATH_SHARED"
-    - echo "PYWB_IMAGE = $PYWB_IMAGE"
-    - echo "PUSHPROX_URL = $PUSHPROX_URL"
-    - echo "PUSHPROX_FQDN = $PUSHPROX_FQDN"
-    - echo "EXTRA_CONFIG = $EXTRA_CONFIG"
-    - echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
-    - docker stack deploy -c docker-compose.yml access_rrwb
+    - ./deploy-rrwb.sh
   only:
     - main
   tags:
     - beta
+
+#
+# This deploys to the IRC server, for evaluation prior to updating production:
+#
+deploy_irc:
+  # Only deploy manually
+  when: manual
+  environment:
+    name: irc-bsp
+    url: https://blstaff-alpha.ldls.org.uk/
+  variables:
+    PYWB_IMAGE: ukwa/ukwa-pywb:custom-viewers
+    LOCKS_AUTH: $LOCKS_AUTH_DEV
+    STORAGE_PATH_SHARED: /home/axsadmin/rrwb
+    DLS_ACCESS_SERVER: http://192.168.217.72
+    PUSHPROX_URL: http://dev1.n45.wa.bl.uk:9494/
+    PUSHPROX_FQDN: irc-bsp-npld.dom.text
+  script:
+    - ./deploy-rrwb.sh
+  only:
+    - main
+  tags: 
+    - irc-bsp-npld.dom.test
 
 
 #deploy_review:
@@ -75,3 +98,31 @@ deploy_beta:
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
+
+# -------------------------------------------------------------------------------------
+# Checks and metrics
+# -------------------------------------------------------------------------------------
+
+# This job gets the NGINX metrics as a local file and stores it as an artefact:
+Get Metrics 1/2:
+  stage: check
+  when: manual
+  script:
+    - curl -o nginx.metrics.dev http://127.0.0.1:3903/metrics
+  artifacts:
+    paths:
+      - nginx.metrics.dev
+    expire_in: 1 day
+  tags:
+    - dev
+    #- irc-bsp-npld.dom.test
+
+Get Metrics 2/2:
+  stage: check
+  needs:
+    - job: Get Metrics 1/2
+      artifacts: true
+  script:
+    - cat nginx.metrics
+  tags:
+    - beta
