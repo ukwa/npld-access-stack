@@ -15,8 +15,7 @@ configure_dev:
   script:
     - cd ${STORAGE_PATH_SHARED}
     - mkdir -p prometheus-data
-    - rm -fr wayback_excludes_update
-    - git clone https://git.wa.bl.uk/bl-services/wayback_excludes_update.git
+    - ./clone-or-push-acls.sh
   only:
     - main
   tags:
@@ -38,8 +37,8 @@ deploy_dev:
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
     EXTRA_CONFIG: -c docker-compose.dev.yml
   script:
-    - echo "Login with CI credential, using server string with port so it exactly matches the CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX..."
-    - docker login git.wa.bl.uk:443 --username ${CI_DEPENDENCY_PROXY_USER} --password ${CI_DEPENDENCY_PROXY_PASSWORD}
+    - echo "Log into depdendency proxy with CI credentials..."
+    - docker login ${CI_DEPENDENCY_PROXY_SERVER} --username ${CI_DEPENDENCY_PROXY_USER} --password ${CI_DEPENDENCY_PROXY_PASSWORD}
     - ./deploy-rrwb.sh
   only:
     - main

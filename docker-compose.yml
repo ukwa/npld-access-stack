@@ -8,7 +8,7 @@ services:
   # Staff Access Service Configuration (no locks):
   # -------------------------------------------------------------
   pywb-staff:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "TLDEXTRACT_CACHE_TIMEOUT=0.1"
     volumes:
@@ -29,7 +29,7 @@ services:
   # Reading Room Wayback with SCU locks, per LDL:
   # -------------------------------------------------------------
   pywb-bl:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/0" # Locks stored in Redis DB 0
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -49,7 +49,7 @@ services:
       - "8300:8080"
 
   pywb-nls:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/1"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -69,7 +69,7 @@ services:
       - "8301:8080"
 
   pywb-llgc:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/2"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -89,7 +89,7 @@ services:
       - "8302:8080"
 
   pywb-cam:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/3"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -109,7 +109,7 @@ services:
       - "8303:8080"
 
   pywb-bod:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/4"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -129,7 +129,7 @@ services:
       - "8304:8080"
 
   pywb-tcd:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "REDIS_URL=redis://redis:6379/5"
       - "LOCKS_AUTH=${LOCKS_AUTH}"
@@ -155,11 +155,11 @@ services:
 
   # Redis service to hold locks
   redis:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/redis:6
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/redis:6
 
   # PushProx to enable integration with Prometheus monitoring
   pushprox-client:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/prom/pushprox:v0.1.0
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/prom/pushprox:v0.1.0
     entrypoint: '/app/pushprox-client'
     command:
       - '--fqdn=${PUSHPROX_FQDN}' # Should point to the host server so any ports can be accessed.
@@ -167,7 +167,7 @@ services:
 
   # Add Prometheus for direct access to metrics:s
   prometheus:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/prom/prometheus
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/prom/prometheus
     ports:
       - 3990:9090
     volumes:
@@ -188,7 +188,7 @@ services:
 
   # Add some setup via NGINX
   nginx:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/nginx:1
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/nginx:1
     command: /opt/mtail/entrypoint.sh
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d/:ro
@@ -225,7 +225,7 @@ services:
 
   # ePub Streamer/Unzipper
   doc-streamer:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/ukwa/epub-streamer:main
+    image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/ukwa/epub-streamer:main
     environment:
       - ARK_SERVER=${DLS_ACCESS_SERVER}
 
