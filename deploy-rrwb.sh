@@ -20,4 +20,5 @@ envsubst < prometheus/prometheus.template.yml > prometheus/prometheus.yml
 
 echo "Deploying the stack..."
 docker stack deploy --with-registry-auth --prune -c docker-compose.yml $EXTRA_CONFIG access_rrwb
-./wait-for-nginx.sh
+# Wait till it's running...
+./wait-for-stack.sh
