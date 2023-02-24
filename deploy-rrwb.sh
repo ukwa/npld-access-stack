@@ -16,6 +16,8 @@ echo "Removing current stack so deployment is completely fresh..."
 docker stack rm access_rrwb
 echo "Waiting for the services to get cleaned up..."
 sleep 30
+echo "Configuring Prometheus..."
+envsubstr < prometheus/prometheus.template.yml > prometheus/prometheus.yml
 echo "Deploying the stack..."
 docker stack deploy --with-registry-auth --prune -c docker-compose.yml $EXTRA_CONFIG access_rrwb
 echo "Sleeping to give things time to start up..."
