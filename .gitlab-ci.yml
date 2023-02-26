@@ -125,6 +125,8 @@ deploy_live_lon:
   tags:
     - $RUNNER
   environment: $ENV
+  variables:
+    GIT_STRATEGY: none # Avoid trashing the checked-out directory (referenced by the deployment):
 
 
 # This job gets the NGINX metrics as a local file and stores it as an artefact:

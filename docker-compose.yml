@@ -185,7 +185,7 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d/:ro
       - ./nginx/mtail:/opt/mtail:ro
-      - ./nginx/webroot:/var/www/nginx-default
+      - ./nginx/webroot:/var/www/nginx-default/:ro
       #- ./nginx/logs:/var/log/nginx:rw
     ports:
       - "8100:8100" # Shared port (service determine by Host header)
