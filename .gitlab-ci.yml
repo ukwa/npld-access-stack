@@ -78,6 +78,7 @@ deploy_live_bsp:
   extends: .deploy
   stage: production
   when: manual # Only run manually
+  needs: ['deploy_irc'] # Only allow if IRC has been deployed
   environment:
     name: live-bsp
     url: https://blstaff-beta.ldls.org.uk/
@@ -90,6 +91,7 @@ deploy_live_lon:
   extends: .deploy
   stage: production
   when: manual # Only run manually
+  needs: ['deploy_irc'] # Only allow if IRC has been deployed
   environment:
     name: live-lon
     url: https://blstaff-beta.ldls.org.uk/
@@ -130,7 +132,7 @@ deploy_live_lon:
 
 
 # This job gets the NGINX metrics as a local file and stores it as an artefact:
-Get Metrics $ENV 1/2:
+Get Metrics 1/2:
   extends: .environments
   script:
     - curl -o metrics.${ENV}.prom 'http://127.0.0.1:3990/federate?match\[\]=\{job!=""\}'
@@ -139,7 +141,7 @@ Get Metrics $ENV 1/2:
       - metrics.$ENV.prom
     expire_in: 1 day
 
-Get Metrics $ENV 2/2:
+Get Metrics 2/2:
   extends: .environments
   needs:
     - job: Get Metrics $ENV 1/2
