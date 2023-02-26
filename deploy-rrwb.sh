@@ -15,8 +15,11 @@ echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
 echo "Removing current stack so deployment is completely fresh..."
 ./shutdown-the-stack.sh
 
-echo "Configuring Prometheus..."
+echo "Generate Prometheus configuration from template..."
 envsubst < prometheus/prometheus.template.yml > prometheus/prometheus.yml
+
+echo "Ensure there is a folder for Prometheus data..."
+mkdir -p ${STORAGE_PATH_SHARED}/prometheus-data
 
 echo "Deploying the stack..."
 docker stack deploy --with-registry-auth --prune -c docker-compose.yml $EXTRA_CONFIG access_rrwb

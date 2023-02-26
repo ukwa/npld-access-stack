@@ -12,21 +12,14 @@ variables:
   DLS_STORAGE_PATH: /home/axsadmin/service-storage
 
 # -------------------------------------------------------------------------------------
-# Job templates re-used across stages, so each job only specifies what's different
+# Deployment (run only on push events, not on schedules)
 # -------------------------------------------------------------------------------------
 
-.configure:
-  variables:
-    STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
-  script:
-    - echo Ensure there is a folder for Prometheus data...
-    - mkdir -p ${STORAGE_PATH_SHARED}/prometheus-data
-    - echo Setting up config in ${STORAGE_PATH_SHARED}...
-    - ./clone-or-pull-acls.sh
-  only:
-    - main
-
+# Job templates re-used across stages, so each job only specifies what's different
 .deploy:
+  rules:
+  # Only run on push events, i.e. do not run during regularly scheduled tasks:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   variables:
     LOCKS_AUTH: $LOCKS_AUTH_DEV
     STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
@@ -38,26 +31,18 @@ variables:
     # These credentials are only valid during the time the job runs, so deployment must wait for images to be fetched.
     - echo $CI_DEPENDENCY_PROXY_PASSWORD | docker login --username $CI_DEPENDENCY_PROXY_USER --password-stdin $CI_DEPENDENCY_PROXY_SERVER
   script:
+    # Make sure the access control lists are there:
+    - ./clone-or-pull-acls.sh
+    # Deploy the stack:
     - ./deploy-rrwb.sh
-  only:
-    - main
 
 # -------------------------------------------------------------------------------------
 # Test Stage deployment in DEV environment
 # -------------------------------------------------------------------------------------
 
-configure_dev:
-  extends: .configure
-  stage: test
-  variables:
-    STORAGE_PATH_SHARED: ${DEV_STORAGE_PATH}
-  tags:
-    - dev  
-
 deploy_dev:
   extends: .deploy
   stage: test
-  needs: ['configure_dev']
   environment:
     name: dev
     url: http://dev1.n45.wa.bl.uk:8209/
@@ -72,18 +57,10 @@ deploy_dev:
 # Staging deployment in IRC environment
 # -------------------------------------------------------------------------------------
 
-configure_irc:
-  extends: .configure
-  stage: staging
-  # Only run manually
-  when: manual
-  tags:
-    - irc-bsp-npld.dom.test
-
 deploy_irc:
   extends: .deploy
   stage: staging
-  needs: ['configure_irc']
+  when: manual
   environment:
     name: irc-bsp
     url: https://blstaff-alpha.ldls.org.uk/
@@ -97,17 +74,10 @@ deploy_irc:
 # Production deployment in LIVE environment
 # -------------------------------------------------------------------------------------
 
-configure_live_bsp:
-  extends: .configure
-  stage: production
-  when: manual # Only run manually
-  tags:
-    - dls-bsp-npld.dom.live
-
 deploy_live_bsp:
   extends: .deploy
   stage: production
-  needs: ['configure_live_bsp']
+  when: manual # Only run manually
   environment:
     name: live-bsp
     url: https://blstaff-beta.ldls.org.uk/
@@ -116,17 +86,10 @@ deploy_live_bsp:
   tags: 
     - dls-bsp-npld.dom.live
 
-configure_live_lon:
-  extends: .configure
-  stage: production
-  when: manual # Only run manually
-  tags:
-    - dls-lon-npld.dom.live
-
 deploy_live_lon:
   extends: .deploy
   stage: production
-  needs: ['configure_live_lon']
+  when: manual # Only run manually
   environment:
     name: live-lon
     url: https://blstaff-beta.ldls.org.uk/
@@ -139,26 +102,47 @@ deploy_live_lon:
 # Checks and metrics
 # -------------------------------------------------------------------------------------
 
-# This job gets the NGINX metrics as a local file and stores it as an artefact:
-Get Metrics 1/2:
+.environments:
   stage: check
   when: manual
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: always
+  parallel:
+    matrix:
+      - ENV: dev
+        RUNNER: dev
+        STORAGE_PATH_SHARED: ${DEV_STORAGE_PATH}
+      - ENV: irc-bsp
+        RUNNER: irc-bsp-npld.dom.test
+        STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
+      - ENV: live-bsp
+        RUNNER: dls-bsp-npld.dom.live
+        STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
+      - ENV: live-lon
+        RUNNER: dls-lon-npld.dom.live
+        STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
+  tags:
+    - $RUNNER
+  environment: $ENV
+
+
+# This job gets the NGINX metrics as a local file and stores it as an artefact:
+Get Metrics $ENV 1/2:
+  extends: .environments
   script:
-    - curl -o metrics.dev.prom 'http://127.0.0.1:3990/federate?match[]={job!=""}'
+    - curl -o metrics.$ENV.prom 'http://127.0.0.1:3990/federate?match[]={job!=""}'
   artifacts:
     paths:
-      - metrics.dev.prom
+      - metrics.$ENV.prom
     expire_in: 1 day
-  tags:
-    - dev
-    #- irc-bsp-npld.dom.test
 
-Get Metrics 2/2:
-  stage: check
+Get Metrics $ENV 2/2:
+  extends: .environments
   needs:
-    - job: Get Metrics 1/2
+    - job: Get Metrics $ENV 1/2
       artifacts: true
   script:
-    - head metrics.dev.prom
+    - head metrics.$ENV.prom
   tags:
     - beta
