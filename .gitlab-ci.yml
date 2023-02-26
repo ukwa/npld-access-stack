@@ -144,7 +144,7 @@ Get Metrics 1/2:
 Get Metrics 2/2:
   extends: .environments
   needs:
-    - job: Get Metrics $ENV 1/2
+    - job: Get Metrics 1/2
       artifacts: true
   script:
     - head metrics.${ENV}.prom
