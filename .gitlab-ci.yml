@@ -131,7 +131,7 @@ deploy_live_lon:
 Get Metrics $ENV 1/2:
   extends: .environments
   script:
-    - curl -o metrics.$ENV.prom 'http://127.0.0.1:3990/federate?match[]={job!=""}'
+    - curl -o metrics.${ENV}.prom 'http://127.0.0.1:3990/federate?match\[\]=\{job!=""\}'
   artifacts:
     paths:
       - metrics.$ENV.prom
@@ -143,6 +143,6 @@ Get Metrics $ENV 2/2:
     - job: Get Metrics $ENV 1/2
       artifacts: true
   script:
-    - head metrics.$ENV.prom
+    - head metrics.${ENV}.prom
   tags:
     - beta
