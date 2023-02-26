@@ -19,8 +19,9 @@ variables:
   variables:
     STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
   script:
-    - echo Setting up config in ${STORAGE_PATH_SHARED}...
+    - echo Ensure there is a folder for Prometheus data...
     - mkdir -p ${STORAGE_PATH_SHARED}/prometheus-data
+    - echo Setting up config in ${STORAGE_PATH_SHARED}...
     - ./clone-or-pull-acls.sh
   only:
     - main
@@ -143,10 +144,10 @@ Get Metrics 1/2:
   stage: check
   when: manual
   script:
-    - curl -o nginx.metrics.dev http://127.0.0.1:3903/metrics
+    - curl -o metrics.dev.prom 'http://127.0.0.1:3990/federate?match[]={job!=""}'
   artifacts:
     paths:
-      - nginx.metrics.dev
+      - metrics.dev.prom
     expire_in: 1 day
   tags:
     - dev
@@ -158,6 +159,6 @@ Get Metrics 2/2:
     - job: Get Metrics 1/2
       artifacts: true
   script:
-    - head nginx.metrics.dev
+    - head metrics.dev.prom
   tags:
     - beta
