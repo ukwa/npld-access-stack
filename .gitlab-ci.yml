@@ -105,6 +105,9 @@ Deploy LIVE-LON:
 # To be run as scheduled tasks, not on code changes
 # -------------------------------------------------------------------------------------
 
+#
+# Template job, to iterate over all deployments:
+#
 .environments:
   stage: check
   when: manual
@@ -134,6 +137,15 @@ Deploy LIVE-LON:
   # Don't specify 'environment' as that is intended to indicate deployment.
   variables:
     GIT_STRATEGY: none # Avoid trashing the checked-out directory (referenced by the deployment):
+
+
+#
+# Update ACLs:
+#
+Update ACLs:
+  extends: .environments
+  script:
+    - ./clone-or-pull-acls.sh
 
 
 #
