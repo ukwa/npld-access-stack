@@ -243,6 +243,23 @@ docker stack rm access_rrwb
 
 #### Configuring an upstream proxy
 
+To ensure the required ports are accessible:
+
+```
+# Shared port:
+sudo firewall-cmd --add-port=8100/tcp --permanent
+# Individual ports:
+sudo firewall-cmd --add-port=8200/tcp --permanent
+sudo firewall-cmd --add-port=8201/tcp --permanent
+sudo firewall-cmd --add-port=8202/tcp --permanent
+sudo firewall-cmd --add-port=8203/tcp --permanent
+sudo firewall-cmd --add-port=8204/tcp --permanent
+sudo firewall-cmd --add-port=8205/tcp --permanent
+sudo firewall-cmd --add-port=8209/tcp --permanent
+# Metrics:
+sudo firewall-cmd --add-port=8309/tcp --permanent
+```
+
 Any upstream proxy talking to these services need to set the host and protocol/scheme so that any URLs returned are correct. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`.
 
 #### Setting up logging
