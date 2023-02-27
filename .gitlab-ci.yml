@@ -40,7 +40,7 @@ variables:
 # Test Stage deployment in DEV environment
 # -------------------------------------------------------------------------------------
 
-deploy_dev:
+Deploy DEV:
   extends: .deploy
   stage: test
   environment:
@@ -57,7 +57,7 @@ deploy_dev:
 # Staging deployment in IRC environment
 # -------------------------------------------------------------------------------------
 
-deploy_irc:
+Deploy IRC:
   extends: .deploy
   stage: staging
   when: manual
@@ -74,7 +74,7 @@ deploy_irc:
 # Production deployment in LIVE environment
 # -------------------------------------------------------------------------------------
 
-deploy_live_bsp:
+Deploy LIVE-BSP:
   extends: .deploy
   stage: production
   when: manual # Only run manually
@@ -87,7 +87,7 @@ deploy_live_bsp:
   tags: 
     - dls-bsp-npld.dom.live
 
-deploy_live_lon:
+Deploy LIVE-LON:
   extends: .deploy
   stage: production
   when: manual # Only run manually
@@ -101,7 +101,8 @@ deploy_live_lon:
     - dls-lon-npld.dom.live
 
 # -------------------------------------------------------------------------------------
-# Checks and metrics
+# Updates, checks and metrics
+# To be run as scheduled tasks, not on code changes
 # -------------------------------------------------------------------------------------
 
 .environments:
@@ -115,23 +116,29 @@ deploy_live_lon:
       - ENV: dev
         RUNNER: dev
         STORAGE_PATH_SHARED: ${DEV_STORAGE_PATH}
+        PUSH_GATEWAY: http://monitor-pushgateway.dapi.wa.bl.uk
       - ENV: irc-bsp
         RUNNER: irc-bsp-npld.dom.test
         STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
+        PUSH_GATEWAY: http://monitor-pushgateway.bapi.wa.bl.uk
       - ENV: live-bsp
         RUNNER: dls-bsp-npld.dom.live
         STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
+        PUSH_GATEWAY: http://monitor-pushgateway.bapi.wa.bl.uk
       - ENV: live-lon
         RUNNER: dls-lon-npld.dom.live
         STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
+        PUSH_GATEWAY: http://monitor-pushgateway.bapi.wa.bl.uk
   tags:
     - $RUNNER
-  environment: $ENV
+  # Don't specify 'environment' as that is intended to indicate deployment.
   variables:
     GIT_STRATEGY: none # Avoid trashing the checked-out directory (referenced by the deployment):
 
 
-# This job gets the NGINX metrics as a local file and stores it as an artefact:
+#
+# This job gets the Prometheus metrics as a local file and stores it as an artefact:
+#
 Get Metrics 1/2:
   extends: .environments
   script:
@@ -141,12 +148,17 @@ Get Metrics 1/2:
       - metrics.$ENV.prom
     expire_in: 1 day
 
+#
+# This picks up the artifacts and pushes them to the appropriate Push Gateway:
+#
 Get Metrics 2/2:
   extends: .environments
   needs:
     - job: Get Metrics 1/2
       artifacts: true
   script:
-    - head metrics.${ENV}.prom
+    # Send the metrics to the Push Gateway: https://github.com/prometheus/pushgateway#command-line
+    - curl --data-binary @metrics.${ENV}.prom ${PUSH_GATEWAY}/metrics/job/access-rrwb/instance/${ENV} 
   tags:
+    # Run this on the BETA Swarm:
     - beta
