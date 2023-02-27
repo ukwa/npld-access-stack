@@ -96,7 +96,7 @@ Deploy LIVE-LON:
     name: live-lon
     url: https://blstaff-beta.ldls.org.uk/
   variables:
-    DLS_ACCESS_SERVER: http://192.168.218.72
+    DLS_ACCESS_SERVER: http://192.168.219.72
   tags: 
     - dls-lon-npld.dom.live
 
