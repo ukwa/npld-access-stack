@@ -78,7 +78,7 @@ Deploy LIVE-BSP:
   extends: .deploy
   stage: production
   when: manual # Only run manually
-  needs: ['deploy_irc'] # Only allow if IRC has been deployed
+  needs: ['Deploy IRC'] # Only allow if IRC has been deployed
   environment:
     name: live-bsp
     url: https://blstaff-beta.ldls.org.uk/
@@ -91,7 +91,7 @@ Deploy LIVE-LON:
   extends: .deploy
   stage: production
   when: manual # Only run manually
-  needs: ['deploy_irc'] # Only allow if IRC has been deployed
+  needs: ['Deploy IRC'] # Only allow if IRC has been deployed
   environment:
     name: live-lon
     url: https://blstaff-beta.ldls.org.uk/
