@@ -123,15 +123,15 @@ Deploy LIVE-LON:
       - ENV: irc-bsp
         RUNNER: irc-bsp-npld.dom.test
         STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
-        PUSH_GATEWAY: http://monitor-pushgateway.bapi.wa.bl.uk
+        PUSH_GATEWAY: http://monitor-pushgateway.api.wa.bl.uk
       - ENV: live-bsp
         RUNNER: dls-bsp-npld.dom.live
         STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
-        PUSH_GATEWAY: http://monitor-pushgateway.bapi.wa.bl.uk
+        PUSH_GATEWAY: http://monitor-pushgateway.api.wa.bl.uk
       - ENV: live-lon
         RUNNER: dls-lon-npld.dom.live
         STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
-        PUSH_GATEWAY: http://monitor-pushgateway.bapi.wa.bl.uk
+        PUSH_GATEWAY: http://monitor-pushgateway.api.wa.bl.uk
   tags:
     - $RUNNER
   # Don't specify 'environment' as that is intended to indicate deployment.
