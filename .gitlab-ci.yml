@@ -142,7 +142,9 @@ Deploy LIVE-LON:
 Get Metrics 1/2:
   extends: .environments
   script:
-    - curl -o metrics.${ENV}.prom 'http://127.0.0.1:3990/federate?match\[\]=\{job!=""\}'
+    - curl -o metrics.${ENV}.prom 'http://127.0.0.1:3903/metrics'
+    # Can't use the Federation endpoint like this as it uses timestamps:
+    #- curl -o metrics.${ENV}.prom 'http://127.0.0.1:3990/federate?match\[\]=\{job!=""\}'
   artifacts:
     paths:
       - metrics.$ENV.prom
