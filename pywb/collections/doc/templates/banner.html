@@ -50,17 +50,18 @@ window.banner_info = {
 };
 </script>
 
-<!-- Kill/collapse the banner:
 <script src="{{ static_prefix }}/loading-spinner/loading-spinner.js"></script>
+<!--
 <script src="{{ static_prefix }}/vue/vueui.js"></script>
 -->
 <link rel="stylesheet" href='{{ static_prefix }}/vue_banner.css'/>
+
+<!-- Kill/collapse the banner (use display/visibility instead?) -->
 <style lang="text/css">
   #app {
     height: 0 !important;
   }
 </style>
-  
 
 {% include 'bootstrap_jquery.html' ignore missing %}
 
