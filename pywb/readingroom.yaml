@@ -54,6 +54,10 @@ collections:
     doc:
         index: $live
         single-use-lock: true
+        
+        # Do not show the banner:
+        use_banner: false
+        enable_banner: false # More recent syntax for upcoming versions
 
         add_headers:
           Cache-Control: 'max-age=0, no-cache, must-revalidate, proxy-revalidate, private'
