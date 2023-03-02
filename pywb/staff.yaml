@@ -1,3 +1,9 @@
+ui:
+    logo: ukwa-2018-w-sml.png
+    navbar_background_hex: 2e6dd9
+    navbar_color_hex: fff
+    navbar_light_buttons: true
+
 collections:
     # NPLD web archive access under /web/
     web:
