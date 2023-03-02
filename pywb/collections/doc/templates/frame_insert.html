@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@UKWebArchive">
+<meta name="og:site" content="UK Web Archive">
+<meta name="og:url" content="{{ wb_prefix }}{{ timestamp }}/{{ url }}">
+<meta name="og:title" content="Archived version of {{ url }} from {{ timestamp | format_ts('%Y') }}">
+<meta name="og:description" content="Archived version of {{ url }} as of {{ timestamp | format_ts('%H:%M, %d/%m/%Y') }} (UTC). Preserved by the UK Web Archive.">
+<!-- Twitter summary_large_image uses a 2:1 aspect ratio -->
+<meta name="og:image" content="{{ env['pywb.host_prefix'] }}/api/iiif/2/urn:pwid:webarchive.org.uk:{{ timestamp | format_ts('%Y:%m:%dT%H:%M:%SZ') }}:page:{{ url | urlencode | replace("/", "%2F") }}/0,0,1024,512/600,/0/default.png">
+<style>
+html, body
+{
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  overflow: hidden;
+}
+#_wb_browser_warning {
+    position: fixed;
+    top: 54px;
+    left: 10px;
+    width: 300px;
+    padding: 15px;
+    z-index: 2147483643;
+    border: solid 2px red;
+    background-color: #FFF;
+}
+
+</style>
+<script src='{{ static_prefix }}/wb_frame.js'> </script>
+
+{% autoescape false %}
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-7571526-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-7571526-1');
+</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics - GA 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K5N6D6LKHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-K5N6D6LKHP');
+</script>
+
+{{ banner_html }}
+
+{% include 'vue_loc.html' %}
+
+</head>
+<body style="margin: 0px; padding: 0px;">
+
+{% include 'terms_of_use.html' %}
+
+<!--
+<div id="app" style="width: 100%; height: 200px"></div>
+<script>
+    VueUI.main("{{ static_prefix }}", "{{ url }}", "{{ wb_prefix }}", "{{ timestamp }}", "{{ ui.logo }}", "{{ ui.navbar_background_hex | default('f8f9fa') }}", "{{ ui.navbar_color_hex | default('212529') }}", "{{ ui.navbar_light_buttons }}", "{{ env.pywb_lang | default('en') }}",
+      allLocales, i18nStrings);
+</script>
+-->
+
+<div id="wb_iframe_div">
+<iframe id="replay_iframe" frameborder="0" seamless="seamless" scrolling="yes" class="wb_iframe"></iframe>
+<script>
+  var cframe = new ContentFrame({"url": "{{ url }}" + window.location.hash,
+                                 "prefix": "{{ wb_prefix }}",
+                                 "request_ts": "{{ wb_url.timestamp }}",
+                                 "iframe": "#replay_iframe"});
+
+  function addBrowserWarning() {
+    var _wb_warning = document.createElement("div");
+    _wb_warning.setAttribute("id", "_wb_browser_warning");
+    _wb_warning.innerHTML = decodeURIComponent("{{ _Q('You are using a browser that is out of date and is not supported for this site. Certain portions of this site may not work correctly. Please try to upgrade or use another browser.') }}");
+    setTimeout(function (){ document.getElementById("_wb_browser_warning").style.display = "none"; }, 15000);
+    document.body.appendChild(_wb_warning);
+  }
+
+  if (window.navigator.userAgent.indexOf("IE 10") !== -1) {
+    addBrowserWarning();
+  }
+</script>
+<!--[if lte IE 9]>
+    <script type="text/javascript">addBrowserWarning();</script>
+<![endif]-->
+</body>
+</html>
+{% endautoescape %}
