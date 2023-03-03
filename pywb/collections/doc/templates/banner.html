@@ -50,9 +50,12 @@ window.banner_info = {
 };
 </script>
 <script src="{{ static_prefix }}/loading-spinner/loading-spinner.js"></script>
+<!-- Not needed (and it breaks anyway):
 <script src="{{ static_prefix }}/vue/vueui.js"></script>
+-->
 <link rel="stylesheet" href='{{ static_prefix }}/vue_banner.css'/>
 
+<!-- Remove the Vue toolbar block altogether: -->
 <style>
 #app {
   display: none !important;
