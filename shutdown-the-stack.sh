@@ -15,4 +15,8 @@ until [[ $( docker network ls | grep access_rrwb_default | wc -l) == 0 ]]; do
     sleep 5
 
 done
+
+# Sleep a little longer just to give Docker time to sync
+sleep 10
+
 echo "The stack is down."
