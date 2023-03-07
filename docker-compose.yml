@@ -11,6 +11,8 @@ services:
     image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/${PYWB_IMAGE}
     environment:
       - "TLDEXTRACT_CACHE_TIMEOUT=0.1"
+      - "UKWA_INDEX=${UKWA_INDEX}"
+      - "UKWA_ARCHIVE=${UKWA_ARCHIVE}"
     volumes:
       - ./pywb/staff.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_ACL}:/ukwa_pywb/acl/
@@ -37,6 +39,8 @@ services:
       - "LOCK_PING_INTERVAL=5"
       - "LOCK_PING_EXTEND_TIME=10"
       - "MUST_AGREE_TO_TERMS=true"
+      - "UKWA_INDEX=${UKWA_INDEX}"
+      - "UKWA_ARCHIVE=${UKWA_ARCHIVE}"
     volumes:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_ACL}:/ukwa_pywb/acl/
@@ -58,6 +62,8 @@ services:
       - "LOCK_PING_INTERVAL=5"
       - "LOCK_PING_EXTEND_TIME=10"
       - "MUST_AGREE_TO_TERMS=true"
+      - "UKWA_INDEX=${UKWA_INDEX}"
+      - "UKWA_ARCHIVE=${UKWA_ARCHIVE}"
     volumes:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_ACL}:/ukwa_pywb/acl/
@@ -79,6 +85,8 @@ services:
       - "LOCK_PING_INTERVAL=5"
       - "LOCK_PING_EXTEND_TIME=10"
       - "MUST_AGREE_TO_TERMS=true"
+      - "UKWA_INDEX=${UKWA_INDEX}"
+      - "UKWA_ARCHIVE=${UKWA_ARCHIVE}"
     volumes:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_ACL}:/ukwa_pywb/acl/
@@ -100,6 +108,8 @@ services:
       - "LOCK_PING_INTERVAL=5"
       - "LOCK_PING_EXTEND_TIME=10"
       - "MUST_AGREE_TO_TERMS=true"
+      - "UKWA_INDEX=${UKWA_INDEX}"
+      - "UKWA_ARCHIVE=${UKWA_ARCHIVE}"
     volumes:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_ACL}:/ukwa_pywb/acl/
@@ -121,6 +131,8 @@ services:
       - "LOCK_PING_INTERVAL=5"
       - "LOCK_PING_EXTEND_TIME=10"
       - "MUST_AGREE_TO_TERMS=true"
+      - "UKWA_INDEX=${UKWA_INDEX}"
+      - "UKWA_ARCHIVE=${UKWA_ARCHIVE}"
     volumes:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_ACL}:/ukwa_pywb/acl/
@@ -142,6 +154,8 @@ services:
       - "LOCK_PING_INTERVAL=5"
       - "LOCK_PING_EXTEND_TIME=10"
       - "MUST_AGREE_TO_TERMS=true"
+      - "UKWA_INDEX=${UKWA_INDEX}"
+      - "UKWA_ARCHIVE=${UKWA_ARCHIVE}"
     volumes:
       - ./pywb/readingroom.yaml:/webarchive/config.yaml
       - ${STORAGE_PATH_ACL}:/ukwa_pywb/acl/
