@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Fork a process to populate the server:
-./populate-cdx.sh &
+/test-data/populate-cdx.sh &
 
 # Startup...
 echo "Starting OutbackCDX..."
