@@ -1,3 +1,6 @@
+INDEX:   &INDEX ${UKWA_INDEX}
+ARCHIVE: &ARCHIVE ${UKWA_ARCHIVE}
+
 ui:
     logo: ukwa-2018-w-sml.png
     navbar_background_hex: 2e6dd9
@@ -9,9 +12,9 @@ collections:
     web:
         index:
           type: cdx
-          api_url: "http://cdx.api.wa.bl.uk/data-heritrix?url={url}&closest={closest}&sort=closest&filter=!statuscode:429&filter=!mimetype:warc/revisit"
+          api_url: *INDEX
           replay_url: ""
-        archive_paths: "webhdfs://warc-server.api.wa.bl.uk/by-filename/"
+        archive_paths: *ARCHIVE
 
         acl_paths:
             - ./acl/blocks.aclj

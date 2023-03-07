@@ -374,7 +374,17 @@ Where Readers are expected to use the NPLD Player, this will need to be installe
 
 Installation packages, built with the secret access token bundled inside, will be made available via this _private_ GitHub repository: https://github.com/ukwa/npld-player-builds  The intention is that all necessary local configuration will be held there and embedded in the distribution packages (one for each legal deposit library).  It will be the responsibility of the deploying library to ensure that the bundled secret access token is accepted by the local authenticating proxy.
 
-It is also necessary to perform some local configuration in order to ensure the NPLD Player knows what service to talk to. For more information see the documentation at: https://github.com/ukwa/npld-player#readme
+It is also necessary to perform some local configuration in order to ensure the NPLD Player knows what service to talk to. This setting is different in every library, so is configured via environment variables, e.g. for the _Alpha_ service for the National Library of Scotland:
+
+```
+NPLD_PLAYER_PREFIX=https://nls-alpha.ldls.org.uk/
+NPLD_PLAYER_INITIAL_WEB_ADDRESS=https://nls-alpha.ldls.org.uk/
+```
+
+_TBA: Allowing/disallowing printing_
+
+Other configuration (e.g. the authentication token) is hardcoded into the application. 
+For more information see the documentation at: https://github.com/ukwa/npld-player#readme
 
 Note that as with the previous solution, the secure deployment of the NPLD Player is critically dependent on the careful management of the Outbound Proxy that links back to the centralized services.  This should be locked down so that it can only be used from IP ranges that correspond to reading rooms, and that the IP range corresponding to reading rooms without locked-down terminals is also configured to require the secure token header, thus ensuring only the NPLD Player can access the material.
 

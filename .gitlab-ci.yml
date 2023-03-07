@@ -49,7 +49,12 @@ Deploy DEV:
   variables:
     STORAGE_PATH_SHARED: ${DEV_STORAGE_PATH}
     DLS_ACCESS_SERVER: http://staffaccess.dl.bl.uk
-    EXTRA_CONFIG: -c docker-compose.dev.yml
+    EXTRA_CONFIG: -c docker-compose.dev.yml -c docker-compose.irc.yml
+    UKWA_INDEX: http://cdxserver:8080/tc?url={url}&closest={closest}&sort=closest&filter=!statuscode:429&filter=!mimetype:warc/revisit
+    UKWA_ARCHIVE: webhdfs://warc-server:8000/by-filename/
+    #UKWA_INDEX: http://cdx.api.wa.bl.uk/data-heritrix?url={url}&closest={closest}&sort=closest&filter=!statuscode:429&filter=!mimetype:warc/revisit
+    #UKWA_ARCHIVE: webhdfs://warc-server.api.wa.bl.uk/by-filename/
+
   tags:
     - dev
 
@@ -69,6 +74,11 @@ Deploy IRC:
     url: https://blstaff-alpha.ldls.org.uk/
   variables:
     DLS_ACCESS_SERVER: http://192.168.217.72
+    # Point to internal/local test systems:
+    EXTRA_CONFIG: -c docker-compose.irc.yml
+    UKWA_INDEX: http://cdxserver:8080/tc?url={url}&closest={closest}&sort=closest&filter=!statuscode:429&filter=!mimetype:warc/revisit
+    UKWA_ARCHIVE: webhdfs://warc-server:8000/by-filename/
+
   tags: 
     - irc-bsp-npld.dom.test
 
@@ -89,6 +99,9 @@ Deploy LIVE-BSP:
     url: https://blstaff-beta.ldls.org.uk/
   variables:
     DLS_ACCESS_SERVER: http://192.168.218.72
+    # Proxied via DLS-BSP-WB02/192.168.218.86
+    UKWA_INDEX: http://192.168.218.86/wa/cdx?url={url}&closest={closest}&sort=closest&filter=!statuscode:429&filter=!mimetype:warc/revisit
+    UKWA_ARCHIVE: webhdfs://192.168.218.86/wa/webhdfs/v1
   tags: 
     - dls-bsp-npld.dom.live
 
@@ -104,6 +117,9 @@ Deploy LIVE-LON:
     url: https://blstaff-beta.ldls.org.uk/
   variables:
     DLS_ACCESS_SERVER: http://192.168.219.72
+    # Proxied via DLS-LON-WB02/192.168.219.86
+    UKWA_INDEX: http://192.168.219.86/wa/cdx?url={url}&closest={closest}&sort=closest&filter=!statuscode:429&filter=!mimetype:warc/revisit
+    UKWA_ARCHIVE: webhdfs://192.168.219.86/wa/webhdfs/v1
   tags: 
     - dls-lon-npld.dom.live
 

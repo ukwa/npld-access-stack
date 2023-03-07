@@ -11,6 +11,9 @@ echo "STORAGE_PATH_ACL = $STORAGE_PATH_ACL"
 echo "PYWB_IMAGE = $PYWB_IMAGE"
 echo "EXTRA_CONFIG = $EXTRA_CONFIG"
 echo "DLS_ACCESS_SERVER = $DLS_ACCESS_SERVER"
+echo "UKWA_INDEX = $UKWA_INDEX"
+echo "UKWA_ARCHIVE = $UKWA_ARCHIVE"
+
 
 echo "Removing current stack so deployment is completely fresh..."
 ./shutdown-the-stack.sh

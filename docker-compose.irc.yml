@@ -1,0 +1,20 @@
+# IRC has no access to the web archive so needs a set of test data.
+version: '3.2'
+
+services:
+
+  # OutbackCDX
+  # Needs populating using script in integration testing folder.
+  cdxserver:
+    image: nlagovau/outbackcdx:0.11.0
+    command: "/test-data/start-ocdx.sh"
+    volumes:
+      - ./test-data:/test-data
+
+  warc-server:
+    image: ukwa/warc-server:1.1.0
+    environment:
+      - "WARC_PATHS=/test-data"
+    volumes:
+      - ./test-data:/test-data
+
