@@ -101,7 +101,7 @@ Deploy LIVE-BSP:
     DLS_ACCESS_SERVER: http://192.168.218.72
     # Proxied via DLS-BSP-WB02/192.168.218.86
     UKWA_INDEX: http://192.168.218.86/wa/cdx?url={url}&closest={closest}&sort=closest&filter=!statuscode:429&filter=!mimetype:warc/revisit
-    UKWA_ARCHIVE: webhdfs://192.168.218.86/wa/webhdfs/v1
+    UKWA_ARCHIVE: webhdfs://192.168.218.86/webhdfs/v1
   tags: 
     - dls-bsp-npld.dom.live
 
@@ -119,7 +119,7 @@ Deploy LIVE-LON:
     DLS_ACCESS_SERVER: http://192.168.219.72
     # Proxied via DLS-LON-WB02/192.168.219.86
     UKWA_INDEX: http://192.168.219.86/wa/cdx?url={url}&closest={closest}&sort=closest&filter=!statuscode:429&filter=!mimetype:warc/revisit
-    UKWA_ARCHIVE: webhdfs://192.168.219.86/wa/webhdfs/v1
+    UKWA_ARCHIVE: webhdfs://192.168.219.86/webhdfs/v1
   tags: 
     - dls-lon-npld.dom.live
 
