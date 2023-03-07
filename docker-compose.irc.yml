@@ -6,13 +6,13 @@ services:
   # OutbackCDX
   # Needs populating using script in integration testing folder.
   cdxserver:
-    image: nlagovau/outbackcdx:0.11.0
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/nlagovau/outbackcdx:0.11.0
     command: "/test-data/start-ocdx.sh"
     volumes:
       - ./test-data:/test-data
 
   warc-server:
-    image: ukwa/warc-server:1.1.0
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/ukwa/warc-server:1.1.0
     environment:
       - "WARC_PATHS=/test-data"
     volumes:

@@ -398,8 +398,7 @@ Note that to avoid copies of material being taken away, libraries should not all
 
 _...TBA: Add routine testing via Robot Framework? Is that possible given the deployment context?_
 
-The formal User Acceptance Testing script for this system is available via the LDL Teams site hosted by the BL. [This link](https://bluk.sharepoint.com/:f:/s/PRJ_LDLTechnicalGroup/Ep4fjZQwupVEhSal19TleyABRGRIcKpD3RRuI2ee1k8Rvw?e=hIcu8q) should take you to the right folder if you are allowed to access it.
-
+The formal User Acceptance Testing script for this system is available via the LDL Teams site hosted by the BL. [This link](https://bluk.sharepoint.com/:f:/s/PRJ_LDLTechnicalGroup/Ep4fjZQwupVEhSal19TleyABRGRIcKpD3RRuI2ee1k8Rvw?e=0h7MeQ) should take you to the right folder if you are allowed to access it.
 
 ## Monitoring
 
