@@ -25,7 +25,7 @@ variables:
     STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
     STORAGE_PATH_ACL: ${STORAGE_PATH_SHARED}/wayback_excludes_update/ldukwa/acl
     STORAGE_PATH_PROMETHEUS: ${STORAGE_PATH_SHARED}/prometheus-data
-    PYWB_IMAGE: ukwa/ukwa-pywb:2.6.9-LDA-1
+    PYWB_IMAGE: ukwa/ukwa-pywb:2.6.9-LDA-1.1
     EXTRA_CONFIG: 
   before_script:
     # These credentials are only valid during the time the job runs, so deployment must wait for images to be fetched.
