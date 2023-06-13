@@ -7,7 +7,6 @@ __Note that this is a public repository, as is mirrored on GitHub as [ukwa/npld-
 ----
 
 - [Introduction](#introduction)
-- [To Do](#to-do)
 - [Overview](#overview)
   - [Deployment Architecture](#deployment-architecture)
 - [The Central Services](#the-central-services)
@@ -24,6 +23,7 @@ __Note that this is a public repository, as is mirrored on GitHub as [ukwa/npld-
 - [Access in Reading Rooms](#access-in-reading-rooms)
   - [Via Secure Terminals](#via-secure-terminals)
   - [Via the NPLD Player](#via-the-npld-player)
+    - [The NPLD Player Custom URL Protocol](#the-npld-player-custom-url-protocol)
   - [Connection to the Central Services](#connection-to-the-central-services)
   - [Deploying the NPLD Player](#deploying-the-npld-player)
   - [Printing](#printing)
@@ -40,10 +40,6 @@ This system provides a web-based access point for every Legal Deposit library, a
 
 This replaces the remote-desktop-based access system by using [UK Web Archive Python Wayback](https://github.com/ukwa/ukwa-pywb) (UKWA PyWB) to provide access to content directly to secure browsers in reading rooms (either directly, or via the forthcoming [NPLD Player](https://github.com/ukwa/npld-player)). The UKWA PyWB system also implements the Single-Concurrent Usage (SCU) locks, and provides a way for staff to manage those locks if needed.
 
-To Do
------
-
-This section has been moved to: https://github.com/ukwa/ukwa-services/issues/69
 
 Overview
 --------
@@ -111,7 +107,7 @@ To provide the central services on the _BSP Stack_ and _STP Stack_, each stack r
 - A Redis service, which holds the SCU lock state for all the PyWB services.
 - A [PushProx](https://github.com/prometheus-community/PushProx) client service, which allows NGINX to be monitored by pushing metrics to a remote [Prometheus](https://prometheus.io/) service via a PushProx proxy.
 
-Each service supports two host names, the real `*.ldls.org.uk` name and a `*-beta.ldls.org.uk` version that could be used if it is necessary to test this system in parallel with the original system.  When accessed over the shared port, NGINX uses the `Host` in the request to determine which service is being called. Each PyWB service also exposes a dedicated port, but this is intended to debugging rather than production use.
+Each service supports three host names, the production `*.ldls.org.uk` name, a `*-beta.ldls.org.uk` name to run tests while running in parallel with the original system, and a `*-alpha.ldls.org.uk` name accessible only by staff for evaluation of new versions of the service.  When accessed over the shared port, NGINX uses the `Host` in the request to determine which service is being called. Each PyWB service also exposes a dedicated port, but this is intended to debugging rather than production use.
 
 
 | Server Name           | Beta Server Name            | Shared NGINX Port | Dedicated NGINX Port | Direct PyWB Port (for debugging) |
@@ -159,6 +155,12 @@ When running operations on the server, the operator should use a non-root user a
 All the necessary base software and configuration is documented (internally) at https://git.wa.bl.uk/ukwa/packages/ukwa-npld-access-support-packages .  This includes setting up the GitLab Runner that is used to manage routine deployment and maintenance.
 
 #### Deploying and Updating the Stack
+
+There are three distinct deployment contexts:
+
+- _DEV_: Only available internally at the BL, for early stage development.
+- _ALPHA_: Deployed on the IRC systems at the BL, with access to test data only. Available to LDL staff only.
+- _BETA_: Deployed on the production system, with access to live data. Available in Reading Rooms.  Once the solution is accepted, this will become the live production system.
 
 Routine deployments will be handled by GitLab CI/CD, as this makes software deployment and configuration much easier. See [`.gitlab-ci.yml`](./.gitlab-ci.yml) for details. 
 
@@ -243,7 +245,7 @@ docker stack rm access_rrwb
 
 #### Configuring an upstream proxy
 
-To ensure the required ports are accessible:
+First, on the deployment server ensure the required ports are accessible:
 
 ```
 # Shared port:
@@ -261,6 +263,8 @@ sudo firewall-cmd --add-port=8309/tcp --permanent
 ```
 
 Any upstream proxy talking to these services need to set the host and protocol/scheme so that any URLs returned are correct. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`.
+
+From the reading rooms, each LDL will have to set up the DNS names that resolve to a suitable user-facing upstream proxy. That proxy then passes the requests on to the other systems in the chain.
 
 #### Setting up logging
 
@@ -316,14 +320,19 @@ For the documents:
 
 - http://host:8209/doc/20010101120000/http://staffaccess.dl.bl.uk/ark:/81055/vdc_100090432161.0x000001
  
+Each service has a special HTML page with some example documents.  The _Beta_ service has a `test_beta.html` file pointing to production data examples, e.g.
 
-_...TBA PDF and ePub and a one or two more of each..._
+<https://blstaff-beta.ldls.org.uk/test_beta.html>
+
+The _Alpha_ service pointing to test data examples is `test_alpha.html`, e.g.
+
+<https://blstaff-alpha.ldls.org.uk/test_alpha.html>
 
 
 Access in Reading Rooms
 ------------------------
 
-How access works depends on the terminals in use.  
+How access works depends on the terminals in use.  The critical constraint is that we need to maintain the NPLD regulations restrictions, including single-concurrent use, which means readers must not be able to take away copies. This requires either locked-down access terminals, or limiting access via a dedicated application called the NPLD Player.
 
 ### Via Secure Terminals
 
@@ -351,6 +360,24 @@ For reading rooms without access to the DLS Access VLAN, the request should be p
 
 No further URL rewriting or other complicated configuration should be required, as and such manipulations should now be managed centrally.
 
+#### The NPLD Player Custom URL Protocol
+
+However, to order to make sure users can get to the content using the NPLD Player, some additional work is required.
+
+The user journey starts with a URL for a NPLD item, found via a library discovery service. As described above, they look like this:
+
+    https://bl.ldls.org.uk/ark:/81055/vdc_100031420983.0x000001
+
+If the user is not on a secure PC (likely identified by their IP address), then the user cannot be shown the content. If they are on a machine that has the NPLD Player installed (again, identified by IP address), they can be redirected to access the content via that application.  This is done using a custom URL scheme, i.e. instead of a `http` URL, the user should be presented with a URL with a `npld-viewer` URL, like this:
+
+    npld-viewer://ark:/81055/vdc_100031420983.0x000001
+
+i.e. the whole host prefix `https://bl.ldls.org.uk/` has been replaced with `npld-viewer://`. This special URL scheme is registered by the NPLD Player when it is installed. Hence, when clicking on this link, the URL will be passed to the player, which will look up content item using the given identifier.
+
+The user will then be able to access the item. 
+
+Note that if the user hits another URL that is not part of the document in question, or part of the archived web if that is the content being accessed, the user will be 'bounced' into the computer's default browser in order to continue.
+
 ### Connection to the Central Services
 
 Both modes of access depend on the Central Services being available. The national libraries of Scotland, Wales and Britain should all be able to access the central services directly via the DLS Access VLAN, but the university libraries, and any library wishing to use the NPLD Player, will need to deploy an additional proxy server locally:
@@ -372,19 +399,16 @@ The role of this server is to proxy user requests to the central services over t
 
 Where Readers are expected to use the NPLD Player, this will need to be installed on the appropriate access terminals.
 
-Installation packages, built with the secret access token bundled inside, will be made available via this _private_ GitHub repository: https://github.com/ukwa/npld-player-builds  The intention is that all necessary local configuration will be held there and embedded in the distribution packages (one for each legal deposit library).  It will be the responsibility of the deploying library to ensure that the bundled secret access token is accepted by the local authenticating proxy.
+Installation packages, built with the secret access token bundled inside, will be made available via this _private_ GitHub repository: https://github.com/ukwa/npld-player-builds  The intention is that configuration common to all libraries will be held there and embedded in the distribution package. This includes the authentication token, as it has to be hardcoded into the application.  It will be the responsibility of the deploying library to ensure that the bundled secret access token is accepted by the local authenticating proxy.
 
-It is also necessary to perform some local configuration in order to ensure the NPLD Player knows what service to talk to. This setting is different in every library, so is configured via environment variables, e.g. for the _Alpha_ service for the National Library of Scotland:
+It is also necessary to perform some additional configuration locally in order to ensure the NPLD Player knows what service to talk to. This setting is different in every library, so is configured via environment variables, e.g. for the _Alpha_ service for the National Library of Scotland:
 
 ```
 NPLD_PLAYER_PREFIX=https://nls-alpha.ldls.org.uk/
 NPLD_PLAYER_INITIAL_WEB_ADDRESS=https://nls-alpha.ldls.org.uk/
 ```
 
-_TBA: Allowing/disallowing printing_
-
-Other configuration (e.g. the authentication token) is hardcoded into the application. 
-For more information see the documentation at: https://github.com/ukwa/npld-player#readme
+Optional features link printing can also be controlled locally in a similar way. For more information see the documentation at: https://github.com/ukwa/npld-player#deployment
 
 Note that as with the previous solution, the secure deployment of the NPLD Player is critically dependent on the careful management of the Outbound Proxy that links back to the centralized services.  This should be locked down so that it can only be used from IP ranges that correspond to reading rooms, and that the IP range corresponding to reading rooms without locked-down terminals is also configured to require the secure token header, thus ensuring only the NPLD Player can access the material.
 
