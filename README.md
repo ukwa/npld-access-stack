@@ -30,6 +30,7 @@ __Note that this is a public repository, as is mirrored on GitHub as [ukwa/npld-
 - [Testing](#testing)
 - [Monitoring](#monitoring)
 - [MI Reporting](#mi-reporting)
+- [Ongoing Development](#ongoing-development)
 
 Introduction
 ------------
@@ -380,7 +381,7 @@ Note that if the user hits another URL that is not part of the document in quest
 
 ### Connection to the Central Services
 
-Both modes of access depend on the Central Services being available. The national libraries of Scotland, Wales and Britain should all be able to access the central services directly via the DLS Access VLAN, but the university libraries, and any library wishing to use the NPLD Player, will need to deploy an additional proxy server locally:
+Both modes of access depend on the Central Services being available. The national libraries of Scotland and Britain should all be able to access the central services directly via the DLS Access VLAN, but the otherlibraries, and any library wishing to use the NPLD Player, will need to deploy an additional proxy server locally:
 
 ```mermaid
 graph LR;
@@ -393,7 +394,7 @@ graph LR;
   LDLc(*.ldls.org.uk - CENTRAL);
 ```
 
-The role of this server is to proxy user requests to the central services over the _Secure WAN Connection_. This is expected to be an NGINX instance that verifies the source IP addresses, handles the validation of the NPLD Player secure token, and sets up the ongoing secure connection to the central services.  This should not require a lot of resources, e.g. a Linux server with 2GB of RAM and at least 2 CPUs. 
+The role of this server is to proxy user requests to the central services over the _Secure WAN Connection_. This is expected to be an NGINX instance that verifies the source IP addresses, handles the validation of the NPLD Player secure token, and sets up the ongoing secure connection to the central services (secured via SSL certs and a shared secret as per the original design).  This should not require a lot of resources, e.g. a Linux server with 2GB of RAM and at least 2 CPUs. 
 
 ### Deploying the NPLD Player
 
@@ -441,3 +442,16 @@ _...TBD: logging locally, including turnaway details, and setup a data feed back
 _...TBA: Some information on how this works at present..._
 
 _...TBA: Some information on whether/how individual user sessions should be identified..._
+
+
+## Ongoing Development
+
+These services need to be kept up to date for security reasons, e.g. browser updates for the NPLD Player and so on. There are also many more formats than ePub and PDF that we need to find ways to support over time.  Therefore, it is expected that we will be dedicating resources to the ongoing development of this service.
+
+Overall, the UK Web Archive team will be responsible for this service. This includes coordinating with any third-party developers, working with internal teams to support deployment, etc.
+
+However, the precise details of how this work is funded and managed across the Legal Deposit libraries need to be worked out. These include:
+
+- Where and how to capture/manage/prioritize the feature backlog. (e.g. an LDL committee)
+- Who will manage/oversee the development roadmap. (i.e. who is the Product Owner.)
+- How will releases be managed/rolled-out across LDLS.
