@@ -402,6 +402,8 @@ Where Readers are expected to use the NPLD Player, this will need to be installe
 
 Installation packages, built with the secret access token bundled inside, will be made available via this _private_ GitHub repository: https://github.com/ukwa/npld-player-builds  The intention is that configuration common to all libraries will be held there and embedded in the distribution package. This includes the authentication token, as it has to be hardcoded into the application.  It will be the responsibility of the deploying library to ensure that the bundled secret access token is accepted by the local authenticating proxy.
 
+To access the builds repository, you need to be a member of the _LDL Tech_ team on the UK Web Archive's GitHub account. To be added to this team, please contact the UK Web Archive directly or via another British Library staff member.
+
 It is also necessary to perform some additional configuration locally in order to ensure the NPLD Player knows what service to talk to. This setting is different in every library, so is configured via environment variables, e.g. for the _Alpha_ service for the National Library of Scotland:
 
 ```
