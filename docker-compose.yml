@@ -237,7 +237,7 @@ services:
 
   # ePub Streamer/Unzipper
   doc-streamer:
-    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/ukwa/epub-streamer:main
+    image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/ukwa/epub-streamer:1.0.1
     environment:
       - ARK_SERVER=${DLS_ACCESS_SERVER}
 
