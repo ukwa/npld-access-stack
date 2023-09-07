@@ -265,7 +265,11 @@ sudo firewall-cmd --add-port=8309/tcp --permanent
 
 Any upstream proxy talking to these services need to set the host and protocol/scheme so that any URLs returned are correct. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`.
 
+<<<<<<< HEAD
 From the reading rooms, each LDL will have to set up the DNS names that resolve to a suitable user-facing upstream proxy. That proxy then passes the requests on to the other systems in the chain.
+=======
+From the reading rooms, each LDL will have to set up the DNS names that resolve to a suitable user-facing upstream proxy. That proxy then passes the requests on to the other systems in the chain.  An example _Apache HTTPD_ server configuration can be found in [the `deployment/apache` folder](./deployment/apache/).
+>>>>>>> tristrams-ApacheConf
 
 #### Setting up logging
 
