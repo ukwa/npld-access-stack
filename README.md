@@ -269,7 +269,9 @@ From the reading rooms, each LDL will have to set up the DNS names that resolve 
 
 #### Setting up logging
 
+
 _TBA: How should logging be set up, for MI and for security?_
+
 
 Currently, the stack extracts Prometheus metrics from web access logs as they stream past, and all the actual log files are managed by Docker.
 
