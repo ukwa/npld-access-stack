@@ -391,6 +391,8 @@ In this case, there should be a 'front door' proxy that the `name.ldls.org.uk` d
 
 This first upstream proxy needs to set the host and protocol/scheme so that the correct URLs returned in the resulting web pages. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`. An example _Apache HTTPD_ server configuration can be found in [the `deployment/apache` folder](./deployment/apache/).
 
+It is up the the individual Legal Deposit to support and maintain this first proxy, so the choice of technology should take that into account. The British Library uses Apache and NGINX on RedHat Enterprise Linux, and is therefore able to offer practical advice to anyone using similar technology. 
+
 _TBC: Should we add more detailed docs about the intervening proxies?_
 
 
