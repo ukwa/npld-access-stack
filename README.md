@@ -14,7 +14,6 @@ __Note that this is a public repository, as is mirrored on GitHub as [ukwa/npld-
   - [Operations](#operations)
     - [Deploying and Updating the Stack](#deploying-and-updating-the-stack)
     - [Deploying and Updating the Stack Manually](#deploying-and-updating-the-stack-manually)
-    - [Configuring the upstream proxy](#configuring-the-upstream-proxy)
     - [Setting up logging](#setting-up-logging)
     - [Setting up monitoring](#setting-up-monitoring)
     - [Updating the Block List](#updating-the-block-list)
@@ -259,14 +258,6 @@ docker stack rm access_rrwb
 ./deploy-rrwb-dev.sh
 ```
 
-#### Configuring the upstream proxy
-
-As indicated above, there will be a chain of proxies resolving connections across the various Legal Deposit libraries.  In each LDL, there should be a 'front door' proxy that the `name.ldls.org.uk` domain resolves to, which then passes the request along the chain until it reaches the centrally hosted services at the British Library.
-
-This first upstream proxy needs to set the host and protocol/scheme so that the correct URLs returned in the resulting web pages. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`. An example _Apache HTTPD_ server configuration can be found in [the `deployment/apache` folder](./deployment/apache/).
-
-_TBC: Should we add more detailed docs about the intervening proxies?_
-
 #### Setting up logging
 
 
@@ -341,7 +332,7 @@ How access works depends on the terminals in use.  The critical constraint is th
 
 In reading rooms with locked-down access terminals, readers may access the central services directly in the access terminal's web browser.
 
-In this case, the domain name of the relevant service, e.g. nls.ldls.org.uk, should be the IP address of the machine acting as the `ldls.org.uk proxy`?  Or does the DNS name refer directly to the BSP or STP Stack?
+In this case, the domain name of the relevant service, e.g. nls.ldls.org.uk, should be the IP address of the machine acting as the `ldls.org.uk proxy`?  _TBC: Or does the DNS name refer directly to the BSP or STP Stack?_
 
 Access to that IP address should be managed at the network and firewall level. Only official Reading Room IP addresses should be able to access the services. For services outside the British Library, access to the central services is enabled by the DLS Access VLAN, which spans all BL/LLGC/NS properties.
 
@@ -383,7 +374,7 @@ Note that if the user hits another URL that is not part of the document in quest
 
 ### Connection to the Central Services
 
-Both modes of access depend on the Central Services being available. The national libraries of Scotland and Britain should all be able to access the central services directly via the DLS Access VLAN, but the otherlibraries, and any library wishing to use the NPLD Player, will need to deploy an additional proxy server locally:
+Both modes of access depend on the Central Services being available. The national libraries of Scotland and Britain should all be able to access the central services directly via the DLS Access VLAN, but the other libraries, and any library wishing to use the NPLD Player, will need to deploy an additional proxy server locally:
 
 ```mermaid
 graph LR;
@@ -396,7 +387,12 @@ graph LR;
   LDLc(*.ldls.org.uk - CENTRAL);
 ```
 
-The role of this server is to proxy user requests to the central services over the _Secure WAN Connection_. This is expected to be an NGINX instance that verifies the source IP addresses, handles the validation of the NPLD Player secure token, and sets up the ongoing secure connection to the central services (secured via SSL certs and a shared secret as per the original design).  This should not require a lot of resources, e.g. a Linux server with 2GB of RAM and at least 2 CPUs. 
+In this case, there should be a 'front door' proxy that the `name.ldls.org.uk` domain resolves to, which then passes the request along the chain (via the _Secure WAN Connection_) until it reaches the centrally hosted services at the British Library. This is expected to be an NGINX or Apache instance that verifies the source IP addresses, handles the validation of the NPLD Player secure token, and sets up the ongoing secure connection to the central services (secured via SSL certs and a shared secret as per the original design).  This should not require a lot of resources, e.g. a Linux server with 2GB of RAM and at least 2 CPUs. 
+
+This first upstream proxy needs to set the host and protocol/scheme so that the correct URLs returned in the resulting web pages. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`. An example _Apache HTTPD_ server configuration can be found in [the `deployment/apache` folder](./deployment/apache/).
+
+_TBC: Should we add more detailed docs about the intervening proxies?_
+
 
 ### Deploying the NPLD Player
 
