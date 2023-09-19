@@ -25,8 +25,8 @@ variables:
     STORAGE_PATH_SHARED: ${DLS_STORAGE_PATH}
     STORAGE_PATH_ACL: ${STORAGE_PATH_SHARED}/wayback_excludes_update/ldukwa/acl
     STORAGE_PATH_PROMETHEUS: ${STORAGE_PATH_SHARED}/prometheus-data
-    PYWB_IMAGE: ukwa/ukwa-pywb:2.6.9-LDA-3.1
-    EXTRA_CONFIG: 
+    PYWB_IMAGE: ukwa/ukwa-pywb:2.6.9-LDA-3.2
+    EXTRA_CONFIG:
   before_script:
     # These credentials are only valid during the time the job runs, so deployment must wait for images to be fetched.
     - echo $CI_DEPENDENCY_PROXY_PASSWORD | docker login --username $CI_DEPENDENCY_PROXY_USER --password-stdin $CI_DEPENDENCY_PROXY_SERVER
