@@ -14,7 +14,7 @@ __Note that this is a public repository, as is mirrored on GitHub as [ukwa/npld-
   - [Operations](#operations)
     - [Deploying and Updating the Stack](#deploying-and-updating-the-stack)
     - [Deploying and Updating the Stack Manually](#deploying-and-updating-the-stack-manually)
-    - [Configuring an upstream proxy](#configuring-an-upstream-proxy)
+    - [Configuring the upstream proxy](#configuring-the-upstream-proxy)
     - [Setting up logging](#setting-up-logging)
     - [Setting up monitoring](#setting-up-monitoring)
     - [Updating the Block List](#updating-the-block-list)
@@ -141,7 +141,22 @@ In each deployment location:
         - WARC record retrieval (`warc-server.api.wa.bl.uk`).
         - GitLab where the URL block list is stored ([`git.wa.bl.uk`](http://git.wa.bl.uk/bl-services/wayback_excludes_update/-/tree/master/ldukwa/acl)).
         - If deployed on the Access VLAN, the existing UKWA service proxy can be used to reach these systems.
+- Ensure the required ports are accessible on the server as shown below:
 
+```
+# Shared port:
+sudo firewall-cmd --add-port=8100/tcp --permanent
+# Individual ports:
+sudo firewall-cmd --add-port=8200/tcp --permanent
+sudo firewall-cmd --add-port=8201/tcp --permanent
+sudo firewall-cmd --add-port=8202/tcp --permanent
+sudo firewall-cmd --add-port=8203/tcp --permanent
+sudo firewall-cmd --add-port=8204/tcp --permanent
+sudo firewall-cmd --add-port=8205/tcp --permanent
+sudo firewall-cmd --add-port=8209/tcp --permanent
+# Metrics:
+sudo firewall-cmd --add-port=8309/tcp --permanent
+```
 
 ### Operations
 
@@ -244,28 +259,13 @@ docker stack rm access_rrwb
 ./deploy-rrwb-dev.sh
 ```
 
-#### Configuring an upstream proxy
+#### Configuring the upstream proxy
 
-First, on the deployment server ensure the required ports are accessible:
+As indicated above, there will be a chain of proxies resolving connections across the various Legal Deposit libraries.  In each LDL, there should be a 'front door' proxy that the `name.ldls.org.uk` domain resolves to, which then passes the request along the chain until it reaches the centrally hosted services at the British Library.
 
-```
-# Shared port:
-sudo firewall-cmd --add-port=8100/tcp --permanent
-# Individual ports:
-sudo firewall-cmd --add-port=8200/tcp --permanent
-sudo firewall-cmd --add-port=8201/tcp --permanent
-sudo firewall-cmd --add-port=8202/tcp --permanent
-sudo firewall-cmd --add-port=8203/tcp --permanent
-sudo firewall-cmd --add-port=8204/tcp --permanent
-sudo firewall-cmd --add-port=8205/tcp --permanent
-sudo firewall-cmd --add-port=8209/tcp --permanent
-# Metrics:
-sudo firewall-cmd --add-port=8309/tcp --permanent
-```
+This first upstream proxy needs to set the host and protocol/scheme so that the correct URLs returned in the resulting web pages. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`. An example _Apache HTTPD_ server configuration can be found in [the `deployment/apache` folder](./deployment/apache/).
 
-Any upstream proxy talking to these services need to set the host and protocol/scheme so that any URLs returned are correct. e.g. for Apache use `ProxyPreserveHost` set to `on` (default is `off`) to set the `Host` header, and use `X-Forwarded-Proto` to specify whether the protocol/scheme is `http` or `https`.
-
-From the reading rooms, each LDL will have to set up the DNS names that resolve to a suitable user-facing upstream proxy. That proxy then passes the requests on to the other systems in the chain.  An example _Apache HTTPD_ server configuration can be found in [the `deployment/apache` folder](./deployment/apache/).
+_TBC: Should we add more detailed docs about the intervening proxies?_
 
 #### Setting up logging
 
