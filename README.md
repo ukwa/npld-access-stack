@@ -411,6 +411,10 @@ NPLD_PLAYER_PREFIX=https://nls-alpha.ldls.org.uk/
 NPLD_PLAYER_INITIAL_WEB_ADDRESS=https://nls-alpha.ldls.org.uk/
 ```
 
+These environment variables must be set at the user or system scope - they won't get picked up from the shell or command line. Here is an example configuration from the BL, testing the Alpha service:
+
+![Example environment variable settings](./docs/images/2023-10-24-npld-player-env.png)
+
 Optional features link printing can also be controlled locally in a similar way. For more information see the documentation at: https://github.com/ukwa/npld-player#deployment
 
 Note that as with the previous solution, the secure deployment of the NPLD Player is critically dependent on the careful management of the Outbound Proxy that links back to the centralized services.  This should be locked down so that it can only be used from IP ranges that correspond to reading rooms, and that the IP range corresponding to reading rooms without locked-down terminals is also configured to require the secure token header, thus ensuring only the NPLD Player can access the material.
